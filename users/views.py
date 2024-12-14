@@ -11,3 +11,15 @@ def admin(request):
 
 def notes(request):
     return render(request, "../templates/notes.html")
+
+
+def popup(request):
+    return render(request, "../templates/popup.html")
+
+
+def service(request):
+    return render(request, "../templates/service.html")
+
+
+def service_finally(request):
+    return render(request, "../templates/serviceFinally.html")
