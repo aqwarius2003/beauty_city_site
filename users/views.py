@@ -7,3 +7,7 @@ def index(request):
 
 def admin(request):
     return render(request, "../templates/admin.html")
+
+
+def notes(request):
+    return render(request, "../templates/notes.html")
