@@ -282,37 +282,37 @@
 
           <div class="row mastersSlider">
             {% for master in masters %}
-            <div class="col-md-3">
-              <div class="cardBlock masters__block">
-                <div class="masters__header fic">
-                  <img
-                    src="{{ master.image.url}}"
-                    alt="master"
-                    class="masters__header_img"
-                  />
-                  <div class="masters__header_elmes">
-                    <div class="masters__header_name">{{ master.name }}</div>
+              <div class="col-md-3">
+                <div class="cardBlock masters__block">
+                  <div class="masters__header fic">
                     <img
-                      src="{% static 'img/rating.svg' %}"
-                      alt="rating"
-                      class="masters__header_rating"
+                      src="{{ master.image.url }}"
+                      alt="master"
+                      class="masters__header_img"
                     />
-                    <div class="masters__header_reviews">24 отзыва</div>
+                    <div class="masters__header_elmes">
+                      <div class="masters__header_name">{{ master.name }}</div>
+                      <img
+                        src="{% static 'img/rating.svg' %}"
+                        alt="rating"
+                        class="masters__header_rating"
+                      />
+                      <div class="masters__header_reviews">24 отзыва</div>
+                    </div>
                   </div>
-                </div>
-                <div class="masters__main">
-                  <div class="masters__main_speciality">СПЕЦИАЛЬНОСТЬ:</div>
-                  <div class="masters__main_intro">{{ master.profession }}</div>
-                </div>
-                <div class="masters__footer fic">
-                  <div class="masters__footer_block">
-                    <div class="masters__footer_light">СТАЖ РАБОТЫ:</div>
-                    <div class="masters__footer_num">{{ master.experience }}</div>
+                  <div class="masters__main">
+                    <div class="masters__main_speciality">СПЕЦИАЛЬНОСТЬ:</div>
+                    <div class="masters__main_intro">{{ master.profession }}</div>
                   </div>
-                  <button class="masters__footer_btn">Записаться</button>
+                  <div class="masters__footer fic">
+                    <div class="masters__footer_block">
+                      <div class="masters__footer_light">СТАЖ РАБОТЫ:</div>
+                      <div class="masters__footer_num">{{ master.experience }}</div>
+                    </div>
+                    <button class="masters__footer_btn">Записаться</button>
+                  </div>
                 </div>
               </div>
-            </div>
             {% endfor %} 
           </div>
         </div>
