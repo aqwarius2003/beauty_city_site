@@ -179,19 +179,19 @@
           <div class="service__form_block service__services">
             <button class="accordion">(Выберите услугу)</button>
             <div class="panel">
-              {% for category in all_type_category %}
+              {% for name_category, services in info_about_service.items %}
 
-                <button class="accordion">{{ category.0 }}</button>
+                <button class="accordion">{{ name_category }}</button>
                 <div class="panel">
                   <!-- <div class="accordion__block_intro">Макияж</div> -->
                   <div class="accordion__block_items">
-                    {% for name_service in category.1 %}
+                    {% for serves in services %}
 
                       <div class="accordion__block_item fic">
                         <div class="accordion__block_item_intro">
-                          {{ name_service }}
+                          {{ serves.0 }}
                         </div>
-                        <div class="accordion__block_item_address">5 000 ₽</div>
+                        <div class="accordion__block_item_address">{{ serves.1 }}</div>
                       </div>
                     {% endfor %}
                   </div>

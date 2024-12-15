@@ -28,13 +28,18 @@ def service(request):
     salons = Salon.objects.all()
 
     cat = Category.objects.all()
-    all_type_category = [(i.name, i.services.all()) for i in cat]
+    info_about_service = {}
+    for i in cat:
+        name_services = i.services.all()
+        services_list = [(j.name, j.price) for j in name_services]
+        info_about_service[i.name] = services_list
+
     return render(
         request=request,
         context={
             "salons": salons,
             "masters": masters,
-            "all_type_category": all_type_category,
+            "info_about_service": info_about_service,
         },
         template_name="../templates/service.html",
     )
