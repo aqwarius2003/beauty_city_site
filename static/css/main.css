@@ -244,6 +244,11 @@ header .row {
     color: #323232;
 }
 
+.salons__block_img{
+    width: 267px;
+    height: 174px;
+}
+
 .salons__elems_light {
     font-weight: 500;
     font-size: 12px;
@@ -277,7 +282,10 @@ header .row {
     padding-left: 16px;
     padding-bottom: 18px;
 }
-
+.services__block_img{
+    width: 267px;
+    height: 174px;
+}
 .services__elems_title {
     font-weight: 500;
     font-size: 14px;
@@ -370,7 +378,7 @@ header .row {
 
 .masters__header_img {
     margin-right: 10px;
-    width: 147px;
+    width: 170px;
     height: 185px;
 }
 
