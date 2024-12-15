@@ -1,6 +1,6 @@
 from django.shortcuts import render
 
-from .models import Master, Salon, Service
+from .models import Master, Salon, Service, Category
 
 
 def index(request):
@@ -24,7 +24,20 @@ def popup(request):
 
 
 def service(request):
-    return render(request, "../templates/service.html")
+    masters = Master.objects.all()
+    salons = Salon.objects.all()
+
+    cat = Category.objects.all()
+    all_type_category = [(i.name, i.services.all()) for i in cat]
+    return render(
+        request=request,
+        context={
+            "salons": salons,
+            "masters": masters,
+            "all_type_category": all_type_category,
+        },
+        template_name="../templates/service.html",
+    )
 
 
 def service_finally(request):
