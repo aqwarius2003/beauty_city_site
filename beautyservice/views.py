@@ -8,11 +8,11 @@ def index(request):
     salons = Salon.objects.all()
     services = Service.objects.all()
 
-    return render(request, 'index.html', context={
-        'masters': masters,
-        'salons': salons,
-        'services': services
-    })
+    return render(
+        request,
+        "index.html",
+        context={"masters": masters, "salons": salons, "services": services},
+    )
 
 
 def notes(request):
