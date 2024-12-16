@@ -27,12 +27,12 @@ def service(request):
     masters = Master.objects.all()
     salons = Salon.objects.all()
 
-    cat = Category.objects.all()
-    info_about_service = {}
-    for i in cat:
-        name_services = i.services.all()
-        services_list = [(j.name, j.price) for j in name_services]
-        info_about_service[i.name] = services_list
+    categores = Category.objects.all()
+    info_about_service: dict[str, list[tuple[str, int]]] = {}
+    for cat in categores:
+        services = cat.services.all()
+        services_list = [(product.name, product.price) for product in services]
+        info_about_service[cat.name] = services_list
 
     return render(
         request=request,

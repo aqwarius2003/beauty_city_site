@@ -201,8 +201,20 @@
           </div>
           <div class="service__form_block service__masters">
             <button class="accordion">(Выберите мастера)</button>
-            <div class="panel"></div>
+            <div class="panel">
+              {% for master in masters %}
+                <div class="accordion__block fic">
+                  <div class="accordion__block_intro">
+                    {{ master.name }}
+                  </div>
+                  <div class="accordion__block_address">
+                    {{ master.profession }}
+                  </div>
+                </div>
+              {% endfor %}
+            </div>
           </div>
+        </div>
       </form>
     </div>
   </div>
