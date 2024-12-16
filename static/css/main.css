@@ -282,7 +282,10 @@ header .row {
     padding-left: 10px;
     padding-right: 10px;
 }
-
+.btn__next{
+    text-decoration: none;
+    color: grey;
+}
 .services__elems {
     padding-left: 16px;
     padding-bottom: 18px;
