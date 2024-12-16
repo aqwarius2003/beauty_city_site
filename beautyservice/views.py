@@ -1,3 +1,4 @@
+from django.http import JsonResponse
 from django.shortcuts import render
 
 from .models import Master, Salon, Service, Category
@@ -24,6 +25,21 @@ def popup(request):
 
 
 def service(request):
+    if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        master_id = request.GET.get('master_id')
+        if master_id:
+            master = Master.objects.prefetch_related('salon', 'service').get(id=master_id)
+            salons = list(master.salon.values('id', 'title', 'address'))
+            services = list(master.service.values('id', 'name', 'price', 'category__name'))
+            print({
+                'salons': salons,
+                'services': services,
+            })
+            return JsonResponse({
+                'salons': salons,
+                'services': services,
+            })
+
     masters = Master.objects.all()
     salons = Salon.objects.all()
 

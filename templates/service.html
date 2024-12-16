@@ -203,7 +203,7 @@
             <button class="accordion">(Выберите мастера)</button>
             <div class="panel">
               {% for master in masters %}
-                <div class="accordion__block fic">
+                <div class="accordion__block fic" data-master-id="{{ master.id }}">
                   <div class="accordion__block_intro">
                     {{ master.name }}
                   </div>
@@ -281,7 +281,8 @@
           <div class="col-md-12">
             <button class="time__btns_next">Далее</button>
 
-            <button class="time__btns_home"><a href="{% url 'beautyservice:index' %}" class="btn__home">На главную</a></button>
+            <button class="time__btns_home"><a href="{% url 'beautyservice:index' %}" class="btn__home">На главную</a>
+            </button>
           </div>
         </div>
       </div>
@@ -411,5 +412,6 @@
 ></script>
 
 <script src="{% static 'js/main.js' %}"></script>
+<script src="{% static 'js/service.js' %}"></script>
 </body>
 </html>
