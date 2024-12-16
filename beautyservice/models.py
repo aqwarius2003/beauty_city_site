@@ -1,9 +1,18 @@
 from django.db import models
 
+from phonenumber_field.modelfields import PhoneNumberField
+
 
 class Salon(models.Model):
-    title = models.CharField("Название", max_length=100)
-    address = models.CharField(verbose_name="Адрес", max_length=100, blank=True)
+    title = models.CharField(
+        "Название",
+        max_length=100
+        )
+    address = models.CharField(
+        "Адрес",
+        max_length=100,
+        blank=True
+        )
     image = models.ImageField(
         "Изображение",
         upload_to="salons/",
@@ -46,7 +55,10 @@ class Service(models.Model):
 
 
 class Category(models.Model):
-    name = models.CharField("Тип услуги", max_length=100)
+    name = models.CharField(
+        "Тип услуги",
+        max_length=100
+        )
 
     def __str__(self):
         return self.name
@@ -65,7 +77,9 @@ class Master(models.Model):
         null=True,
     )
     salon = models.ManyToManyField(
-        Salon, related_name="masters", verbose_name="Салоны мастера"
+        Salon,
+        related_name="masters",
+        verbose_name="Салоны мастера"
     )
     profession = models.CharField(
         "Профессия",
@@ -80,7 +94,9 @@ class Master(models.Model):
         null=True,
     )
     service = models.ManyToManyField(
-        Service, related_name="masters", verbose_name="Услуги мастера"
+        Service,
+        related_name="masters",
+        verbose_name="Услуги мастера"
     )
 
     def __str__(self):
@@ -89,3 +105,22 @@ class Master(models.Model):
     class Meta:
         verbose_name = "Мастер"
         verbose_name_plural = "Мастера"
+
+
+class Client(models.Model):
+    name = models.CharField(
+        'Имя',
+        max_length=255,
+        db_index=True
+    )
+    phone = PhoneNumberField(
+        'телефон',
+        db_index=True
+    )
+
+    def __str__(self):
+        return f'{self.name} {self.phone}'
+
+    class Meta:
+        verbose_name = 'Клиент'
+        verbose_name_plural = 'Клиенты'
