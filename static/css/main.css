@@ -103,6 +103,11 @@ header .row {
     margin-right: 0;
 }
 
+.btn__home {
+    text-decoration: none;
+    color: grey;
+}
+
 .menu__item_link {
     font-size: 14px;
     line-height: 127.52%;
@@ -244,7 +249,7 @@ header .row {
     color: #323232;
 }
 
-.salons__block_img{
+.salons__block_img {
     width: 267px;
     height: 174px;
 }
@@ -282,10 +287,12 @@ header .row {
     padding-left: 16px;
     padding-bottom: 18px;
 }
-.services__block_img{
+
+.services__block_img {
     width: 267px;
     height: 174px;
 }
+
 .services__elems_title {
     font-weight: 500;
     font-size: 14px;
@@ -2494,7 +2501,7 @@ footer {
         line-height: 127.52%;
         /* identical to box height, or 31px */
 
-        margin-bottom: 4px
+        margin-bottom: 4px;
         color: #262626;
 
     }
