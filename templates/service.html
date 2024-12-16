@@ -185,13 +185,13 @@
                 <div class="panel">
                   <!-- <div class="accordion__block_intro">Макияж</div> -->
                   <div class="accordion__block_items">
-                    {% for serves in services %}
+                    {% for service in services %}
 
                       <div class="accordion__block_item fic">
                         <div class="accordion__block_item_intro">
-                          {{ serves.0 }}
+                          {{ service.0 }}
                         </div>
-                        <div class="accordion__block_item_address">{{ serves.1 }}</div>
+                        <div class="accordion__block_item_address">{{ service.1 }}</div>
                       </div>
                     {% endfor %}
                   </div>
