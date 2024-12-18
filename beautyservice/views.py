@@ -136,3 +136,24 @@ def get_services_for_masters(request):
     ]
 
     return JsonResponse(service_list, safe=False)
+
+
+def get_salons_for_masters_and_services(request):
+    master_id = request.GET.get('master_id')
+    service_id = request.GET.get('service_id')
+
+    if not master_id or not service_id:
+        return JsonResponse({'error': 'Master ID and Service ID are required'}, status=400)
+
+    try:
+        master = Master.objects.get(id=master_id)
+    except Master.DoesNotExist:
+        return JsonResponse({'error': 'Master not found'}, status=404)
+
+    salons = Salon.objects.filter(masters=master)
+
+    salons_with_service = salons.filter(masters__service__id=service_id).distinct()
+
+    salon_data = [{'id': salon.id, 'title': salon.title} for salon in salons_with_service]
+
+    return JsonResponse(salon_data, safe=False)

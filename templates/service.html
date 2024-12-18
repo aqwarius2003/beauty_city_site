@@ -506,13 +506,21 @@
 
             // Эта хрень загружает мастеров при изменении услуги
             loadMasters() {
-                if (!this.selectedService) return;
-                fetch(`/api/masters/?service_id=${this.selectedService}&salon_id=${this.selectedSalon}`)
-                    .then(response => response.json())
-                    .then(data => {
-                        this.masters = data;
-                    })
-                    .catch(error => console.error('Ошибка при загрузке мастеров:', error));
+                if (this.selectedMaster) {
+                    fetch(`/api/get_salons_for_masters_and_services/?service_id=${this.selectedService}&master_id=${this.selectedMaster}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            this.salons = data;
+                        })
+                } else {
+                    if (!this.selectedService) return;
+                    fetch(`/api/masters/?service_id=${this.selectedService}&salon_id=${this.selectedSalon}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            this.masters = data;
+                        })
+                        .catch(error => console.error('Ошибка при загрузке мастеров:', error));
+                }
             },
 
             showServicesForMaster() {
