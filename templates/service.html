@@ -164,35 +164,37 @@
         <option value="salon3" >Салон 3</option>
       </select> -->
         <div id="app">
-          <!-- Выбор салона -->
-          <!-- Выбор салона -->
-          <select v-model="selectedSalon" @change="loadServices">
+          <label for="selectSalon">Выберите салон</label>
+          <select v-model="selectedSalon" @change="loadServices" class="service__form_select"
+                  v-show="salons.length > 0">
             <option value="" disabled selected>Выберите салон</option>
             <option v-for="salon in salons" :value="salon.id" :key="salon.id">
               ${ salon.title }
             </option>
           </select>
 
-          <!-- Выбор услуги -->
-          <select v-model="selectedService" @change="loadMasters" v-if="services.length > 0">
+
+          <label for="selectedService">Выберите услугу</label>
+          <select v-model="selectedService" @change="loadMasters" v-show="services.length > 0"
+                  class="service__form_select">
             <option value="" disabled selected>Выберите услугу</option>
             <option v-for="service in services" :value="service.id" :key="service.id">
-              ${ service.name } (${ service.price } ₽) - ${ service.category__name }
+              ${ service.name } (${ service.price } ₽) - ${ service.category }
             </option>
           </select>
 
-          <!-- Выбор мастера -->
-          <select v-model="selectedMaster" v-if="masters.length > 0">
+          <label for="selectedMaster">Выберите мастера</label>
+          <select v-model="selectedMaster" v-show="masters.length > 0" class="service__form_select">
             <option value="" disabled selected>Выберите мастера</option>
             <option v-for="master in masters" :value="master.id" :key="master.id">
               ${ master.name }
             </option>
           </select>
 
-          <!-- Сообщение, если нет услуг -->
+          <!-- Отладка -->
           <p v-if="services.length === 0">Услуги не загружены или нет данных для выбранного салона.</p>
-
         </div>
+
 
         {#        <div class="service__form_block service__salons">#}
         {#          <button class="accordion">(Выберите салон)</button>#}
@@ -455,42 +457,58 @@
                 masters: [],
                 selectedSalon: null,
                 selectedService: null,
-                selectedMaster: null
+                selectedMaster: null,
             };
         },
         mounted() {
-            console.log('Компонент монтируется');
             this.loadSalons();
+            this.loadAllServicesAndMasters();
         },
         methods: {
             loadSalons() {
                 fetch('/api/get_salons/')
                     .then(response => response.json())
                     .then(data => {
-                        console.log(data)
                         this.salons = data;
                     })
                     .catch(error => console.error('Ошибка при загрузке салонов:', error));
             },
 
+            loadAllServicesAndMasters() {
+                fetch('api/get_all_services/')
+                    .then(response => response.json())
+                    .then(data => {
+                        this.services = data;
+                    })
+                    .catch(error => console.error('Ошибка при загрузке услуг:', error));
+
+                fetch('api/get_all_masters/')
+                    .then(response => response.json())
+                    .then(data => {
+                        this.masters = data;
+                    })
+                    .catch(error => console.error('Ошибка при загрузке мастеров:', error));
+            },
+
+
+            // Эта хрень загружает услуги при изменении салона
             loadServices() {
                 if (!this.selectedSalon) return;
 
                 fetch(`/api/services/?salon_id=${this.selectedSalon}`)
                     .then(response => response.json())
                     .then(data => {
-                        console.log('Загруженные услуги:', data);
                         this.services = data;
                     })
                     .catch(error => console.error('Ошибка при загрузке услуг:', error));
             },
+
+            // Эта хрень загружает мастеров при изменении услуги
             loadMasters() {
                 if (!this.selectedService) return;
-
-                fetch(`/api/masters/?service_id=${this.selectedService}`)
+                fetch(`/api/masters/?service_id=${this.selectedService}&salon_id=${this.selectedSalon}`)
                     .then(response => response.json())
                     .then(data => {
-                        console.log('Загруженные мастера:', data);
                         this.masters = data;
                     })
                     .catch(error => console.error('Ошибка при загрузке мастеров:', error));

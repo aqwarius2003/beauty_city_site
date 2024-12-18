@@ -14,4 +14,7 @@ urlpatterns = [
     path('api/get_salons/', views.get_salons, name='get_salons'),
     path('api/services/', views.get_services, name='get_services'),
     path('api/masters/', views.get_masters, name='get_masters'),
+    path('service/api/get_all_services/', views.get_all_services, name='get_all_services'),
+    path('service/api/get_all_masters/', views.get_all_masters, name='get_all_masters'),
+
 ]

@@ -56,17 +56,35 @@ def get_salons(request):
     return JsonResponse(salon_data, safe=False, json_dumps_params={'ensure_ascii': False})
 
 
+def get_all_services(request):
+    services = Service.objects.all()
+    service_list = [
+        {
+            'id': service.id,
+            'name': service.name,
+            'price': service.price,
+            'category': service.category.name,
+        }
+        for service in services
+    ]
+
+    return JsonResponse(service_list, safe=False)
+
+
+def get_all_masters(request):
+    masters = Master.objects.all()
+    master_data = [{'id': master.id, 'name': master.name, 'profession': master.profession} for master in masters]
+    return JsonResponse(master_data, safe=False)
+
+
 def get_services(request):
     salon_id = request.GET.get('salon_id')
     if salon_id:
-        try:
-            salon = Salon.objects.get(id=salon_id)
-        except Salon.DoesNotExist:
-            return JsonResponse({'error': 'Salon not found'}, status=404)
+        salon = Salon.objects.get(id=salon_id)
 
         masters_in_salon = Master.objects.filter(salon=salon)
 
-        services = Service.objects.filter(masters__in=masters_in_salon)
+        services = Service.objects.filter(masters__in=masters_in_salon).distinct()
         service_list = [
             {
                 'id': service.id,
@@ -76,7 +94,7 @@ def get_services(request):
             }
             for service in services
         ]
-
+        print(service_list)
         return JsonResponse(service_list, safe=False)
 
     return JsonResponse({'error': 'Salon ID is required'}, status=400)
@@ -84,6 +102,17 @@ def get_services(request):
 
 def get_masters(request):
     service_id = request.GET.get('service_id')
-    masters = Master.objects.filter(service__id=service_id)
-    master_data = [{'id': master.id, 'name': master.name, 'profession': master.profession} for master in masters]
+    salon_id = request.GET.get('salon_id')
+    if not service_id or not salon_id:
+        return JsonResponse({'error': 'Service ID and Salon ID are required'}, status=400)
+
+    masters = Master.objects.filter(
+        service__id=service_id,
+        salon__id=salon_id
+    ).distinct()
+
+    master_data = [
+        {'id': master.id, 'name': master.name, 'profession': master.profession}
+        for master in masters
+    ]
     return JsonResponse(master_data, safe=False)
