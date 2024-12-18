@@ -1,7 +1,7 @@
 from django.http import JsonResponse
 from django.shortcuts import render
 
-from .models import Master, Salon, Service, Category
+from .models import Master, Salon, Service, Category, Schedule
 
 
 def index(request):
@@ -28,6 +28,7 @@ def service(request):
     masters = Master.objects.all()
     salons = Salon.objects.all()
     categories = Category.objects.all()
+    schedule = Schedule.objects.filter(is_active=True)
 
     info_about_service: dict[str, list[tuple[str, int]]] = {}
     for category in categories:
@@ -41,6 +42,7 @@ def service(request):
             "salons": salons,
             "masters": masters,
             "info_about_service": info_about_service,
+            "schedule": schedule
         },
         template_name="../templates/service.html",
     )

@@ -124,3 +124,32 @@ class Client(models.Model):
     class Meta:
         verbose_name = 'Клиент'
         verbose_name_plural = 'Клиенты'
+
+
+class Schedule(models.Model):
+    salon = models.ForeignKey(
+        Salon,
+        on_delete=models.CASCADE,
+        related_name="schedules"
+    )
+    master = models.ForeignKey(
+        Master,
+        on_delete=models.CASCADE,
+        related_name="schedules"
+    )
+    date = models.DateField(
+        "Дата"
+    )
+    time = models.TimeField(
+        "Время"
+    )
+    is_active = models.BooleanField(
+        default=True
+    )
+
+    def __str__(self):
+        return self.master.name
+
+    class Meta:
+        verbose_name = "Расписание"
+        verbose_name_plural = "Расписание"
