@@ -10,4 +10,8 @@ urlpatterns = [
     path("popup/", views.popup, name="popup"),
     path("service/", views.service, name="service"),
     path("service_finally/", views.service_finally, name="service_finally"),
+
+    path('api/get_salons/', views.get_salons, name='get_salons'),
+    path('api/services/', views.get_services, name='get_services'),
+    path('api/masters/', views.get_masters, name='get_masters'),
 ]

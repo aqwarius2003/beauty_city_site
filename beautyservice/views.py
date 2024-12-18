@@ -25,29 +25,14 @@ def popup(request):
 
 
 def service(request):
-    if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-        master_id = request.GET.get('master_id')
-        if master_id:
-            master = Master.objects.prefetch_related('salon', 'service').get(id=master_id)
-            salons = list(master.salon.values('id', 'title', 'address'))
-            services = list(master.service.values('id', 'name', 'price', 'category__name'))
-            print({
-                'salons': salons,
-                'services': services,
-            })
-            return JsonResponse({
-                'salons': salons,
-                'services': services,
-            })
-
     masters = Master.objects.all()
     salons = Salon.objects.all()
-
     categories = Category.objects.all()
+
     info_about_service: dict[str, list[tuple[str, int]]] = {}
     for category in categories:
         services = category.services.all()
-        services_list = [(product.name, product.price) for product in services]
+        services_list = [{"name": service.name, "price": service.price, "id": service.id} for service in services]
         info_about_service[category.name] = services_list
 
     return render(
@@ -63,3 +48,42 @@ def service(request):
 
 def service_finally(request):
     return render(request, "../templates/serviceFinally.html")
+
+
+def get_salons(request):
+    salons = Salon.objects.all()
+    salon_data = [{'id': salon.pk, 'title': salon.title} for salon in salons]
+    return JsonResponse(salon_data, safe=False, json_dumps_params={'ensure_ascii': False})
+
+
+def get_services(request):
+    salon_id = request.GET.get('salon_id')
+    if salon_id:
+        try:
+            salon = Salon.objects.get(id=salon_id)
+        except Salon.DoesNotExist:
+            return JsonResponse({'error': 'Salon not found'}, status=404)
+
+        masters_in_salon = Master.objects.filter(salon=salon)
+
+        services = Service.objects.filter(masters__in=masters_in_salon)
+        service_list = [
+            {
+                'id': service.id,
+                'name': service.name,
+                'price': service.price,
+                'category': service.category.name,
+            }
+            for service in services
+        ]
+
+        return JsonResponse(service_list, safe=False)
+
+    return JsonResponse({'error': 'Salon ID is required'}, status=400)
+
+
+def get_masters(request):
+    service_id = request.GET.get('service_id')
+    masters = Master.objects.filter(service__id=service_id)
+    master_data = [{'id': master.id, 'name': master.name, 'profession': master.profession} for master in masters]
+    return JsonResponse(master_data, safe=False)
