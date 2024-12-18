@@ -116,3 +116,23 @@ def get_masters(request):
         for master in masters
     ]
     return JsonResponse(master_data, safe=False)
+
+
+def get_services_for_masters(request):
+    master_id = request.GET.get('master_id')
+
+    if not master_id:
+        return JsonResponse({'error': 'Master ID is required'}, status=400)
+
+    services = Service.objects.filter(masters__id=master_id).distinct()
+    service_list = [
+        {
+            'id': service.id,
+            'name': service.name,
+            'price': service.price,
+            'category': service.category.name,
+        }
+        for service in services
+    ]
+
+    return JsonResponse(service_list, safe=False)

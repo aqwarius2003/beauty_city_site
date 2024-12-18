@@ -184,7 +184,8 @@
           </select>
 
           <label for="selectedMaster">Выберите мастера</label>
-          <select v-model="selectedMaster" v-show="masters.length > 0" class="service__form_select">
+          <select v-model="selectedMaster" @change="showServicesForMaster" v-show="masters.length > 0"
+                  class="service__form_select">
             <option value="" disabled selected>Выберите мастера</option>
             <option v-for="master in masters" :value="master.id" :key="master.id">
               ${ master.name }
@@ -512,6 +513,16 @@
                         this.masters = data;
                     })
                     .catch(error => console.error('Ошибка при загрузке мастеров:', error));
+            },
+
+            showServicesForMaster() {
+                if (!this.selectedMaster) return;
+                fetch(`/api/get_services_for_masters/?master_id=${this.selectedMaster}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        this.services = data;
+                    })
+                    .catch(error => console.error('Ошибка при загрузке услуг:', error));
             }
         }
     });
