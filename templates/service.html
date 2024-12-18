@@ -264,10 +264,9 @@
         <div class="time__block">
           <div class="row">
             <div class="col-md-4">
-              <!-- Выбор даты -->
-              <div id="datepickerHere">
-                <input type="date" v-model="selectedDate" @change="loadSchedule">
-              </div>
+              <!-- ! Календарь -->
+              <div id="datepickerHere"></div>
+
             </div>
             <div class="col-md-8">
               <!-- Отображение доступного времени -->
@@ -473,8 +472,36 @@
         mounted() {
             this.loadSalons();
             this.loadAllServicesAndMasters();
+            this.initDatepicker();
         },
         methods: {
+            //! TODO Баг с двумя календарями
+            initDatepicker() {
+                const datepickerElements = document.querySelectorAll('.air-datepicker');
+
+                // Удаляем все существующие календари, если они есть
+                datepickerElements.forEach(el => {
+                    if (el._air-datepicker) {
+                        el._datepicker.destroy();
+                    }
+                });
+
+                const datepickerElement = document.querySelector('#datepickerHere');
+
+                // Убеждаемся, что новый календарь будет только один
+                if (datepickerElement) {
+                    new AirDatepicker('#datepickerHere', {
+                        inline: true,  // Делаем календарь inline, если нужно
+                        onSelect: ({formattedDate}) => {
+                            this.selectedDate = formattedDate;
+                            this.loadSchedule();
+                        },
+                        dateFormat: 'yyyy-MM-dd',
+                    });
+                }
+            },
+
+
             loadSchedule() {
                 //! TODO Тут надо было обработать какой-то баг, но я забыл какой(:
                 if (this.selectedMaster || this.selectedDate) {
@@ -490,13 +517,15 @@
                         });
                 }
 
-            },
+            }
+            ,
 
             // Чтобы при нажатии на время выбирался салон
             selectTime(time) {
                 this.selectedTime = time.time;
                 this.selectedSalon = time.salon_id;
-            },
+            }
+            ,
 
 
             loadSalons() {
@@ -506,7 +535,8 @@
                         this.salons = data;
                     })
                     .catch(error => console.error('Ошибка при загрузке салонов:', error));
-            },
+            }
+            ,
 
             loadAllServicesAndMasters() {
                 fetch('api/get_all_services/')
@@ -522,7 +552,8 @@
                         this.masters = data;
                     })
                     .catch(error => console.error('Ошибка при загрузке мастеров:', error));
-            },
+            }
+            ,
 
 
             // Эта хрень загружает услуги при изменении салона
@@ -535,7 +566,8 @@
                         this.services = data;
                     })
                     .catch(error => console.error('Ошибка при загрузке услуг:', error));
-            },
+            }
+            ,
 
             // Эта хрень загружает мастеров при изменении услуги
             loadMasters() {
@@ -554,7 +586,8 @@
                         })
                         .catch(error => console.error('Ошибка при загрузке мастеров:', error));
                 }
-            },
+            }
+            ,
 
             showServicesForMaster() {
                 if (!this.selectedMaster) return;
