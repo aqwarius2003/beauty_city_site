@@ -2,6 +2,8 @@ from django.http import JsonResponse
 from django.shortcuts import render
 
 from .models import Master, Salon, Service, Category, Schedule
+from .models import Schedule
+from datetime import datetime
 
 
 def index(request):
@@ -96,7 +98,6 @@ def get_services(request):
             }
             for service in services
         ]
-        print(service_list)
         return JsonResponse(service_list, safe=False)
 
     return JsonResponse({'error': 'Salon ID is required'}, status=400)
@@ -159,3 +160,44 @@ def get_salons_for_masters_and_services(request):
     salon_data = [{'id': salon.id, 'title': salon.title} for salon in salons_with_service]
 
     return JsonResponse(salon_data, safe=False)
+
+
+def get_schedule(request):
+    master_id = request.GET.get('master_id')
+    date = request.GET.get('date')
+
+    try:
+        # Преобразуем строку даты в объект datetime
+        date = datetime.strptime(date, '%Y-%m-%d').date()
+
+        # Получаем все расписания для выбранного мастера и даты
+        schedules = Schedule.objects.filter(master_id=master_id, date=date)
+        print(schedules)
+        # Разбиваем расписание по времени
+        time_slots = {}
+        for schedule in schedules:
+            if schedule.is_active:
+                time_slot = {
+                    "time": schedule.time.strftime('%H:%M'),
+                    "salon_id": schedule.salon_id  # Используем salon_id из модели Schedule
+                }
+                time_of_day = get_time_of_day(schedule.time)
+                if time_of_day not in time_slots:
+                    time_slots[time_of_day] = []
+                time_slots[time_of_day].append(time_slot)
+        return JsonResponse(time_slots)
+
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
+
+
+def get_time_of_day(time):
+    """Определяем часть дня: утро, день, вечер."""
+    if 6 <= time.hour < 12:
+        return 'Утро'
+    elif 12 <= time.hour < 18:
+        return 'День'
+    elif 18 <= time.hour < 22:
+        return 'Вечер'
+    else:
+        return 'Ночь'

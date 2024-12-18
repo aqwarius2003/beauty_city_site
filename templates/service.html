@@ -145,25 +145,26 @@
     </div>
   </div>
 </header>
-<section id="service">
-  <div class="container">
-    <div class="service">
-      <div class="breadCrumbs">
-        <a href="{% url 'beautyservice:index' %}" class="breadCrumbs__item">На главную</a>
-      </div>
-      <div class="service__block">
-        <h1 class="service__title">Запись на услугу</h1>
-        <button class="service__btn btn">Запись по телефону</button>
-      </div>
+<div id="app">
+  <section id="service">
+    <div class="container">
+      <div class="service">
+        <div class="breadCrumbs">
+          <a href="{% url 'beautyservice:index' %}" class="breadCrumbs__item">На главную</a>
+        </div>
+        <div class="service__block">
+          <h1 class="service__title">Запись на услугу</h1>
+          <button class="service__btn btn">Запись по телефону</button>
+        </div>
 
-      <form action="#" class="service__form">
-        <!-- <select name="selectSalon" id="" class="service__form_select">
-        <option value="" selected>(Выберите салон)</option>
-        <option value="salon1" >Салон 1</option>
-        <option value="salon2" >Салон 2</option>
-        <option value="salon3" >Салон 3</option>
-      </select> -->
-        <div id="app">
+        <form action="#" class="service__form">
+          <!-- <select name="selectSalon" id="" class="service__form_select">
+          <option value="" selected>(Выберите салон)</option>
+          <option value="salon1" >Салон 1</option>
+          <option value="salon2" >Салон 2</option>
+          <option value="salon3" >Салон 3</option>
+        </select> -->
+
           <label for="selectSalon">Выберите салон</label>
           <select v-model="selectedSalon" @change="loadServices" class="service__form_select"
                   v-show="salons.length > 0">
@@ -197,138 +198,117 @@
 
           <!-- Отладка -->
           <p v-if="services.length === 0">Услуги не загружены или нет данных для выбранного салона.</p>
-        </div>
 
 
-        {#        <div class="service__form_block service__salons">#}
-        {#          <button class="accordion">(Выберите салон)</button>#}
-        {#          <div class="panel">#}
-        {#            {% for salon in salons %}#}
-        {#              <div class="accordion__block fic">#}
-        {#                <div class="accordion__block_intro">#}
-        {#                  {{ salon.title }}#}
-        {#                </div>#}
-        {#                <div class="accordion__block_address">#}
-        {#                  {{ salon.address }}#}
-        {#                </div>#}
-        {#              </div>#}
-        {#            {% endfor %}#}
-        {#          </div>#}
-        {#          <div class="service__form_block service__services">#}
-        {#            <button class="accordion">(Выберите услугу)</button>#}
-        {#            <div class="panel">#}
-        {#              {% for name_category, services in info_about_service.items %}#}
-        {##}
-        {#                <button class="accordion">{{ name_category }}</button>#}
-        {#                <div class="panel">#}
-        {#                  <!-- <div class="accordion__block_intro">Макияж</div> -->#}
-        {#                  <div class="accordion__block_items">#}
-        {#                    {% for service in services %}#}
-        {##}
-        {#                      <div class="accordion__block_item fic">#}
-        {#                        <div class="accordion__block_item_intro">#}
-        {#                          {{ service.0 }}#}
-        {#                        </div>#}
-        {#                        <div class="accordion__block_item_address">{{ service.1 }}</div>#}
-        {#                      </div>#}
-        {#                    {% endfor %}#}
-        {#                  </div>#}
-        {#                </div>#}
-        {#              {% endfor %}#}
-        {#            </div>#}
-        {#          </div>#}
-        {#          <div class="service__form_block service__masters">#}
-        {#            <button class="accordion">(Выберите мастера)</button>#}
-        {#            <div class="panel">#}
-        {#              {% for master in masters %}#}
-        {#                <div class="accordion__block fic" data-master-id="{{ master.id }}">#}
-        {#                  <div class="accordion__block_intro">#}
-        {#                    {{ master.name }}#}
-        {#                  </div>#}
-        {#                  <div class="accordion__block_address">#}
-        {#                    {{ master.profession }}#}
-        {#                  </div>#}
-        {#                </div>#}
-        {#              {% endfor %}#}
-        {#            </div>#}
-        {#          </div>#}
-        {#        </div>#}
-      </form>
+          {#        <div class="service__form_block service__salons">#}
+          {#          <button class="accordion">(Выберите салон)</button>#}
+          {#          <div class="panel">#}
+          {#            {% for salon in salons %}#}
+          {#              <div class="accordion__block fic">#}
+          {#                <div class="accordion__block_intro">#}
+          {#                  {{ salon.title }}#}
+          {#                </div>#}
+          {#                <div class="accordion__block_address">#}
+          {#                  {{ salon.address }}#}
+          {#                </div>#}
+          {#              </div>#}
+          {#            {% endfor %}#}
+          {#          </div>#}
+          {#          <div class="service__form_block service__services">#}
+          {#            <button class="accordion">(Выберите услугу)</button>#}
+          {#            <div class="panel">#}
+          {#              {% for name_category, services in info_about_service.items %}#}
+          {##}
+          {#                <button class="accordion">{{ name_category }}</button>#}
+          {#                <div class="panel">#}
+          {#                  <!-- <div class="accordion__block_intro">Макияж</div> -->#}
+          {#                  <div class="accordion__block_items">#}
+          {#                    {% for service in services %}#}
+          {##}
+          {#                      <div class="accordion__block_item fic">#}
+          {#                        <div class="accordion__block_item_intro">#}
+          {#                          {{ service.0 }}#}
+          {#                        </div>#}
+          {#                        <div class="accordion__block_item_address">{{ service.1 }}</div>#}
+          {#                      </div>#}
+          {#                    {% endfor %}#}
+          {#                  </div>#}
+          {#                </div>#}
+          {#              {% endfor %}#}
+          {#            </div>#}
+          {#          </div>#}
+          {#          <div class="service__form_block service__masters">#}
+          {#            <button class="accordion">(Выберите мастера)</button>#}
+          {#            <div class="panel">#}
+          {#              {% for master in masters %}#}
+          {#                <div class="accordion__block fic" data-master-id="{{ master.id }}">#}
+          {#                  <div class="accordion__block_intro">#}
+          {#                    {{ master.name }}#}
+          {#                  </div>#}
+          {#                  <div class="accordion__block_address">#}
+          {#                    {{ master.profession }}#}
+          {#                  </div>#}
+          {#                </div>#}
+          {#              {% endfor %}#}
+          {#            </div>#}
+          {#          </div>#}
+          {#        </div>#}
+        </form>
+      </div>
     </div>
-  </div>
-</section>
-<section id="time">
-  <div class="container">
-    <div class="time">
-      <h2 class="time__title">Выберите время</h2>
-      <div class="time__block">
-        <div class="row">
-          <div class="col-md-4">
-            <div id="datepickerHere"></div>
-          </div>
-          <div class="col-md-8">
-            <div class="time__elems">
-              <div class="time__items">
-                <div class="time__elems_intro">Утро</div>
-                <div class="time__elems_elem fic">
-                  <button data-time="10:00" class="time__elems_btn">
-                    10:00
-                  </button>
-                  <button data-time="10:30" class="time__elems_btn">
-                    10:30
-                  </button>
+  </section>
+  <section id="time">
+    <div class="container">
+      <div class="time">
+        <h2 class="time__title">Выберите время</h2>
+        <div class="time__block">
+          <div class="row">
+            <div class="col-md-4">
+              <!-- Выбор даты -->
+              <div id="datepickerHere">
+                <input type="date" v-model="selectedDate" @change="loadSchedule">
+              </div>
+            </div>
+            <div class="col-md-8">
+              <!-- Отображение доступного времени -->
+              <div class="time__elems" v-if="timeSlots">
+                <div v-for="(times, partOfDay) in timeSlots" :key="partOfDay" class="time__items">
+                  <div class="time__elems_intro">${ partOfDay }</div>
+                  <div class="time__elems_elem fic">
+                    <button
+                            v-for="timeSlot in times"
+                            :key="timeSlot.time"
+                            @click="selectTime(timeSlot)"
+                            class="time__elems_btn">
+                      ${ timeSlot.time }
+                    </button>
+                  </div>
                 </div>
               </div>
-              <div class="time__items">
-                <div class="time__elems_intro">День</div>
-                <div class="time__elems_elem fic">
-                  <button data-time="12:00" class="time__elems_btn">
-                    12:00
-                  </button>
-                  <button data-time="12:30" class="time__elems_btn">
-                    12:30
-                  </button>
-                  <button data-time="15:00" class="time__elems_btn">
-                    15:00
-                  </button>
-                  <button data-time="16:30" class="time__elems_btn">
-                    16:30
-                  </button>
-                </div>
-              </div>
-              <div class="time__items">
-                <div class="time__elems_intro">Вечер</div>
-                <div class="time__elems_elem fic">
-                  <button data-time="17:00" class="time__elems_btn">
-                    17:00
-                  </button>
-                  <button data-time="18:30" class="time__elems_btn">
-                    18:30
-                  </button>
-                  <button data-time="19:00" class="time__elems_btn">
-                    19:00
-                  </button>
-                </div>
+              <div v-else>
+                <p>Нет доступного времени для выбранной даты.</p>
               </div>
             </div>
           </div>
         </div>
-      </div>
-      <div class="time__btns">
-        <div class="row">
-          <div class="col-md-12">
-            <button class="time__btns_next"><a href="{% url 'beautyservice:service_finally' %}"
-                                               class="btn__next">Далее</a>>
-            </button>
+        <div class="time__btns">
+          <div class="row">
+            <div class="col-md-12">
+              <button class="time__btns_next" :disabled="!selectedTime">
+                <a href="{% url 'beautyservice:service_finally' %}" class="btn__next">Далее</a>
+              </button>
 
-            <button class="time__btns_home"><a href="{% url 'beautyservice:index' %}" class="btn__home">На главную</a>
-            </button>
+              <button class="time__btns_home">
+                <a href="{% url 'beautyservice:index' %}" class="btn__home">На главную</a>
+              </button>
+            </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
-</section>
+  </section>
+  </section>
+</div>
 <footer id="footer">
   <div class="container">
     <div class="footer">
@@ -465,11 +445,13 @@
                 selectedService: null,
                 selectedMaster: null,
                 selectedCategory: null,
-                selectedService: null,
+                selectedDate: '',
+                timeSlots: null,
+                selectedTime: null
             };
         },
+        //Для группировки по категориям
         computed: {
-            // Группировка услуг по категориям
             groupedServices() {
                 return this.services.reduce((acc, service) => {
                     const category = service.category;
@@ -481,7 +463,6 @@
                 }, {});
             },
 
-            // Фильтрация услуг по выбранной категории
             servicesForSelectedCategory() {
                 if (this.selectedCategory) {
                     return this.services.filter(service => service.category === this.selectedCategory);
@@ -494,6 +475,30 @@
             this.loadAllServicesAndMasters();
         },
         methods: {
+            loadSchedule() {
+                //! TODO Тут надо было обработать какой-то баг, но я забыл какой(:
+                if (this.selectedMaster || this.selectedDate) {
+                    const url = `/api/get_schedule/?master_id=${this.selectedMaster}&date=${this.selectedDate}`;
+
+                    fetch(url)
+                        .then(response => response.json())
+                        .then(data => {
+                            this.timeSlots = data;
+                        })
+                        .catch(error => {
+                            console.error('Error loading schedule:', error);
+                        });
+                }
+
+            },
+
+            // Чтобы при нажатии на время выбирался салон
+            selectTime(time) {
+                this.selectedTime = time.time;
+                this.selectedSalon = time.salon_id;
+            },
+
+
             loadSalons() {
                 fetch('/api/get_salons/')
                     .then(response => response.json())
@@ -561,7 +566,8 @@
                     .catch(error => console.error('Ошибка при загрузке услуг:', error));
             }
         }
-    });
+    },)
+    ;
 
 </script>
 <script src="{% static 'js/main.js' %}"></script>

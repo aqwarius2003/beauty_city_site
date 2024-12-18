@@ -23,6 +23,8 @@ urlpatterns = [
     path('api/get_salons_for_masters_and_services/',
          views.get_salons_for_masters_and_services,
          name='get_salons_for_masters_and_services'
-         )
+         ),
+
+    path('api/get_schedule/', views.get_schedule, name='get_schedule'),
 
 ]
