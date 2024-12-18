@@ -178,10 +178,13 @@
           <select v-model="selectedService" @change="loadMasters" v-show="services.length > 0"
                   class="service__form_select">
             <option value="" disabled selected>Выберите услугу</option>
-            <option v-for="service in services" :value="service.id" :key="service.id">
-              ${ service.name } (${ service.price } ₽) - ${ service.category }
-            </option>
+            <optgroup v-for="(group, category) in groupedServices" :label="category" :key="category">
+              <option v-for="service in group" :value="service.id" :key="service.id">
+                ${ service.name } (${ service.price } ₽)
+              </option>
+            </optgroup>
           </select>
+
 
           <label for="selectedMaster">Выберите мастера</label>
           <select v-model="selectedMaster" @change="showServicesForMaster" v-show="masters.length > 0"
@@ -314,7 +317,9 @@
       <div class="time__btns">
         <div class="row">
           <div class="col-md-12">
-            <button class="time__btns_next"><a href="{% url 'beautyservice:service_finally' %}" class="btn__next">Далее</a>></button>
+            <button class="time__btns_next"><a href="{% url 'beautyservice:service_finally' %}"
+                                               class="btn__next">Далее</a>>
+            </button>
 
             <button class="time__btns_home"><a href="{% url 'beautyservice:index' %}" class="btn__home">На главную</a>
             </button>
@@ -459,7 +464,30 @@
                 selectedSalon: null,
                 selectedService: null,
                 selectedMaster: null,
+                selectedCategory: null,
+                selectedService: null,
             };
+        },
+        computed: {
+            // Группировка услуг по категориям
+            groupedServices() {
+                return this.services.reduce((acc, service) => {
+                    const category = service.category;
+                    if (!acc[category]) {
+                        acc[category] = [];
+                    }
+                    acc[category].push(service);
+                    return acc;
+                }, {});
+            },
+
+            // Фильтрация услуг по выбранной категории
+            servicesForSelectedCategory() {
+                if (this.selectedCategory) {
+                    return this.services.filter(service => service.category === this.selectedCategory);
+                }
+                return [];
+            }
         },
         mounted() {
             this.loadSalons();
