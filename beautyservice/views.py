@@ -1,8 +1,9 @@
 from django.http import JsonResponse
 from django.shortcuts import render
 
-from .models import Master, Salon, Service, Category, Schedule, Note
+from .models import Master, Salon, Service, Category, Schedule, Note, Client
 from datetime import datetime
+import json
 
 
 def index(request):
@@ -281,3 +282,34 @@ def get_time_of_day(time):
         return 'Вечер'
     else:
         return 'Ночь'
+
+
+def create_order(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        salon_title = data.get('salon')
+        service_title = data.get('service')
+        master_name = data.get('master')
+        time = data.get('time')
+        date = data.get('date')
+        name = data.get('fname')
+        phone = data.get('tel')
+        question = data.get('contactsTextarea', '')
+
+        if not (salon_title and service_title and master_name and time and date and name and phone):
+            return JsonResponse({'success': False, 'error': 'Все обязательные поля должны быть заполнены.'}, status=400)
+
+        salon = Salon.objects.get(title=salon_title)
+        service = Service.objects.get(name=service_title)
+        master = Master.objects.get(name=master_name)
+        schedule = Schedule.objects.get(salon=salon, master=master, date=date, time=time)
+        client, created = Client.objects.get_or_create(name=name, phone=phone)
+
+        note = Note.objects.create(
+            salon=salon,
+            client=client,
+            master=master,
+            service=service,
+            price=service.price,
+        )
+        return JsonResponse({'success': True, 'message': 'Запись успешно создана!', 'note_id': note.id})
