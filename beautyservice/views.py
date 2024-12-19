@@ -18,8 +18,8 @@ def index(request):
 
 
 def notes(request, client_id=1):
-    notes = Note.objects\
-        .filter(client_id=client_id)\
+    notes = Note.objects \
+        .filter(client_id=client_id) \
         .select_related('service', 'master', 'salon')
     total_price = 0
     for note in notes:
@@ -62,7 +62,28 @@ def service(request):
 
 
 def service_finally(request):
-    return render(request, "../templates/serviceFinally.html")
+    salon = request.GET.get('salon')
+    service = request.GET.get('service')
+    master = request.GET.get('master')
+    date = request.GET.get('date')
+    time = request.GET.get('time')
+
+    salon = Salon.objects.get(id=salon)
+    service = Service.objects.get(id=service)
+    master = Master.objects.get(id=master)
+
+    print(salon, service, master, date, time, salon.address)
+    return render(
+        request,
+        context={
+            "salon": salon,
+            "service": service,
+            "master": master,
+            "date": date,
+            "time": time
+        },
+        template_name="../templates/serviceFinally.html"
+    )
 
 
 def get_salons(request):
@@ -113,7 +134,7 @@ def get_services(request):
         for schedule in schedules:
             master = schedule.master
             services = master.service.all()
-            
+
             for service in services:
                 # if service.id not in unique_services:
                 unique_services[service.id] = {
@@ -133,7 +154,7 @@ def get_services(request):
 def get_masters(request):
     service_id = request.GET.get('service_id')
     salon_id = request.GET.get('salon_id')
-    
+
     if not service_id or not salon_id:
         return JsonResponse({'error': 'Service ID and Salon ID are required'}, status=400)
 

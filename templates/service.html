@@ -294,7 +294,8 @@
           <div class="row">
             <div class="col-md-12">
               <button class="time__btns_next" :disabled="!selectedTime">
-                <a href="{% url 'beautyservice:service_finally' %}" class="btn__next">Далее</a>
+                <a :href="`{% url 'beautyservice:service_finally' %}?salon=${selectedSalon}&service=${selectedService}&master=${selectedMaster}&date=${selectedDate}&time=${selectedTime}`"
+                   class="btn__next">Далее</a>
               </button>
 
               <button class="time__btns_home">
@@ -481,7 +482,7 @@
 
                 // Удаляем все существующие календари, если они есть
                 datepickerElements.forEach(el => {
-                    if (el._air-datepicker) {
+                    if (el._air - datepicker) {
                         el._datepicker.destroy();
                     }
                 });
@@ -515,19 +516,18 @@
                         .catch(error => {
                             console.error('Error loading schedule:', error);
                         });
-                }
-                else if (this.selectedMaster && this.selectedDate && !this.selectedSalon) {
-                  const url = `/api/get_schedule/?master_id=${this.selectedMaster}&date=${this.selectedDate}`;
+                } else if (this.selectedMaster && this.selectedDate && !this.selectedSalon) {
+                    const url = `/api/get_schedule/?master_id=${this.selectedMaster}&date=${this.selectedDate}`;
 
-                  fetch(url)
-                      .then(response => response.json())
-                      .then(data => {
-                          this.timeSlots = data;
-                      })
-                      .catch(error => {
-                          console.error('Error loading schedule:', error);
-                      });
-              }
+                    fetch(url)
+                        .then(response => response.json())
+                        .then(data => {
+                            this.timeSlots = data;
+                        })
+                        .catch(error => {
+                            console.error('Error loading schedule:', error);
+                        });
+                }
 
             }
             ,

@@ -166,20 +166,20 @@
                     >
                     <div class="serviceFinally__form_header__item fic">
                       <div class="serviceFinally__form_header__service">
-                        BeautyCity Пушкинская
+                        {{ salon }}
                       </div>
                       <div class="serviceFinally__form_header__address">
-                        ул. Пушкинская, д. 78А
+                        {{ salon.address }}
                       </div>
                     </div>
                   </div>
                   <div class="serviceFinally__form_content">
                     <div class="serviceFinally__form_content__block fic">
                       <div class="serviceFinally__form_content__title">
-                        Дневной макияж
+                        {{ service }}
                       </div>
                       <div class="serviceFinally__form_content__price">
-                        750 ₽
+                        {{ service.price }} ₽
                       </div>
                     </div>
                     <div class="serviceFinally__form_content__block fic">
@@ -190,15 +190,15 @@
                           class="accordion__block_img"
                         />
                         <div class="accordion__block_master">
-                          Елена Грибнова
+                          {{ master }}
                         </div>
                       </div>
                       <div class="serviceFinally__form_content__item fic">
                         <div class="serviceFinally__form_content__time">
-                          16:30
+                          {{ time }}
                         </div>
                         <div class="serviceFinally__form_content__date">
-                          18 ноября
+                          {{ date }}
                         </div>
                       </div>
                     </div>
