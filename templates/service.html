@@ -265,7 +265,9 @@
           <div class="row">
             <div class="col-md-4">
               <!-- ! Календарь -->
-              <div id="datepickerHere"></div>
+
+              <input type="text" id="datepickerHere" style="display: none">
+
 
             </div>
             <div class="col-md-8">
@@ -447,7 +449,7 @@
                 selectedCategory: null,
                 selectedDate: '',
                 timeSlots: null,
-                selectedTime: null
+                selectedTime: null,
             };
         },
         //Для группировки по категориям
@@ -474,32 +476,29 @@
             this.loadSalons();
             this.loadAllServicesAndMasters();
             this.initDatepicker();
+
         },
         methods: {
             //! TODO Баг с двумя календарями
-            initDatepicker() {
-                const datepickerElements = document.querySelectorAll('.air-datepicker');
 
-                // Удаляем все существующие календари, если они есть
-                datepickerElements.forEach(el => {
-                    if (el._air - datepicker) {
-                        el._datepicker.destroy();
+            initDatepicker() {
+                const datepickerElement = document.getElementById('datepickerHere');
+
+                // Удаляем предыдущий календарь, если он существует
+                if (datepickerElement.airDatepicker) {
+                    datepickerElement.airDatepicker.destroy();
+                }
+
+                new AirDatepicker('#datepickerHere', {
+
+                    inline: true,
+                    dateFormat: 'yyyy-MM-dd',
+                    onSelect: ({formattedDate}) => {
+                        console.log('Выбрана дата:', formattedDate);
+                        this.selectedDate = formattedDate;
+                        this.loadSchedule();
                     }
                 });
-
-                const datepickerElement = document.querySelector('#datepickerHere');
-
-                // Убеждаемся, что новый календарь будет только один
-                if (datepickerElement) {
-                    new AirDatepicker('#datepickerHere', {
-                        inline: true,  // Делаем календарь inline, если нужно
-                        onSelect: ({formattedDate}) => {
-                            this.selectedDate = formattedDate;
-                            this.loadSchedule();
-                        },
-                        dateFormat: 'yyyy-MM-dd',
-                    });
-                }
             },
 
 
