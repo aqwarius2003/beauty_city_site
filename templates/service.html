@@ -504,7 +504,7 @@
 
             loadSchedule() {
                 //! TODO Тут надо было обработать какой-то баг, но я забыл какой(:
-                if (this.selectedMaster || this.selectedSalon || this.selectedDate) {
+                if (this.selectedMaster && this.selectedSalon && this.selectedDate) {
                     const url = `/api/get_schedule_for_salon/?master_id=${this.selectedMaster}&salon_id=${this.selectedSalon}&date=${this.selectedDate}`;
 
                     fetch(url)
@@ -516,7 +516,7 @@
                             console.error('Error loading schedule:', error);
                         });
                 }
-                else if (this.selectedMaster || this.selectedDate || !this.selectedSalon) {
+                else if (this.selectedMaster && this.selectedDate && !this.selectedSalon) {
                   const url = `/api/get_schedule/?master_id=${this.selectedMaster}&date=${this.selectedDate}`;
 
                   fetch(url)
