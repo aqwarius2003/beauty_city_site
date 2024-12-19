@@ -153,3 +153,31 @@ class Schedule(models.Model):
     class Meta:
         verbose_name = "Расписание"
         verbose_name_plural = "Расписание"
+
+
+class Note(models.Model):
+    salon = models.ForeignKey(Salon,
+                              on_delete=models.CASCADE,
+                              related_name='notes',
+                              verbose_name='Салон')
+    client = models.ForeignKey(Client,
+                               on_delete=models.CASCADE,
+                               related_name='notes',
+                               verbose_name='Клиент')
+    master = models.ForeignKey(Master,
+                               on_delete=models.CASCADE,
+                               related_name='notes',
+                               verbose_name='Мастер')
+    service = models.ForeignKey(Service,
+                                on_delete=models.CASCADE,
+                                verbose_name='Услуга')
+    price = models.DecimalField(max_digits=10,
+                                decimal_places=2,
+                                blank=True,
+                                verbose_name='Итоговая цена')  
+    created_at = models.DateTimeField(verbose_name='Дата создания',
+                                      auto_now=True)
+
+    class Meta:
+        verbose_name = 'Запись'
+        verbose_name_plural = 'Записи'
