@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Salon, Master, Service, Category, Schedule
+from .models import Salon, Master, Service, Category, Schedule, Note, Client
 
 
 @admin.register(Salon)
@@ -26,3 +26,13 @@ class CategoryAdmin(admin.ModelAdmin):
 @admin.register(Schedule)
 class ScheduleAdmin(admin.ModelAdmin):
     list_display = ("salon", "master", "date", "time")
+
+
+@admin.register(Note)
+class NoteAdmin(admin.ModelAdmin):
+    list_display = ("id", "salon", "created_at")
+
+
+@admin.register(Client)
+class ClientAdmin(admin.ModelAdmin):
+    list_display = ("name", "phone")
