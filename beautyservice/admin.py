@@ -35,4 +35,4 @@ class NoteAdmin(admin.ModelAdmin):
 
 @admin.register(Client)
 class ClientAdmin(admin.ModelAdmin):
-    list_display = ("name", "phone")
+    list_display = ("id", "name", "phone")

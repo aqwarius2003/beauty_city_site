@@ -1,8 +1,7 @@
 from django.http import JsonResponse
 from django.shortcuts import render
 
-from .models import Master, Salon, Service, Category, Schedule
-from .models import Schedule
+from .models import Master, Salon, Service, Category, Schedule, Note
 from datetime import datetime
 
 
@@ -18,8 +17,20 @@ def index(request):
     )
 
 
-def notes(request):
-    return render(request, "../templates/notes.html")
+def notes(request, client_id=1):
+    notes = Note.objects\
+        .filter(client_id=client_id)\
+        .select_related('service', 'master', 'salon')
+    total_price = 0
+    for note in notes:
+        total_price += note.price
+
+    context = {
+        'notes': notes,
+        'total_price': total_price
+    }
+
+    return render(request, "../templates/notes.html", context=context)
 
 
 def popup(request):
@@ -55,8 +66,6 @@ def service_finally(request):
 
 
 def get_salons(request):
-    # salons = Salon.objects.all()
-    # salon_data = [{'id': salon.pk, 'title': salon.title} for salon in salons]
     unique_salons = Schedule.objects.values('salon__id', 'salon__title').distinct()
 
     salon_data = [{'id': salon['salon__id'], 'title': salon['salon__title']} for salon in unique_salons]
@@ -65,16 +74,6 @@ def get_salons(request):
 
 
 def get_all_services(request):
-    # services = Service.objects.all()
-    # service_list = [
-    #     {
-    #         'id': service.id,
-    #         'name': service.name,
-    #         'price': service.price,
-    #         'category': service.category.name,
-    #     }
-    #     for service in services
-    # ]
     schedules = Schedule.objects.all()
     service_list = []
     unique_service_ids = set()
