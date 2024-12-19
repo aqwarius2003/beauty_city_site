@@ -55,49 +55,77 @@ def service_finally(request):
 
 
 def get_salons(request):
-    salons = Salon.objects.all()
-    salon_data = [{'id': salon.pk, 'title': salon.title} for salon in salons]
+    # salons = Salon.objects.all()
+    # salon_data = [{'id': salon.pk, 'title': salon.title} for salon in salons]
+    unique_salons = Schedule.objects.values('salon__id', 'salon__title').distinct()
+
+    salon_data = [{'id': salon['salon__id'], 'title': salon['salon__title']} for salon in unique_salons]
+    print(salon_data)
     return JsonResponse(salon_data, safe=False, json_dumps_params={'ensure_ascii': False})
 
 
 def get_all_services(request):
-    services = Service.objects.all()
-    service_list = [
-        {
-            'id': service.id,
-            'name': service.name,
-            'price': service.price,
-            'category': service.category.name,
-        }
-        for service in services
-    ]
+    # services = Service.objects.all()
+    # service_list = [
+    #     {
+    #         'id': service.id,
+    #         'name': service.name,
+    #         'price': service.price,
+    #         'category': service.category.name,
+    #     }
+    #     for service in services
+    # ]
+    schedules = Schedule.objects.all()
+    service_list = []
+    unique_service_ids = set()
 
+    for schedule in schedules:
+        master = schedule.master
+        services = master.service.all()
+        for service in services:
+            if service.id not in unique_service_ids:
+                unique_service_ids.add(service.id)
+                service_list.append(
+                    {
+                        'id': service.id,
+                        'name': service.name,
+                        'price': service.price,
+                        'category': service.category.name,
+                    }
+                )
+
+    print(service_list)
     return JsonResponse(service_list, safe=False)
 
 
 def get_all_masters(request):
-    masters = Master.objects.all()
+    masters = Master.objects.filter(schedules__isnull=False).distinct()
     master_data = [{'id': master.id, 'name': master.name, 'profession': master.profession} for master in masters]
+    print(master_data)
     return JsonResponse(master_data, safe=False)
 
 
 def get_services(request):
     salon_id = request.GET.get('salon_id')
     if salon_id:
-        salon = Salon.objects.get(id=salon_id)
+        schedules = Schedule.objects.filter(salon_id=salon_id).prefetch_related('master__service')
+        unique_services = {}
 
-        masters_in_salon = Master.objects.filter(salon=salon)
+        for schedule in schedules:
+            master = schedule.master
+            services = master.service.all()
+            
+            for service in services:
+                # if service.id not in unique_services:
+                unique_services[service.id] = {
+                    'id': service.id,
+                    'name': service.name,
+                    'price': service.price,
+                    'category': service.category.name,
+                }
 
-        services = Service.objects.filter(masters__in=masters_in_salon).distinct()
-        service_list = [
-            {
-                'id': service.id,
-                'name': service.name,
-                'price': service.price,
-                'category': service.category.name,
-            }
-            for service in services
-        ]
+        service_list = list(unique_services.values())
+        print(service_list)
         return JsonResponse(service_list, safe=False)
 
     return JsonResponse({'error': 'Salon ID is required'}, status=400)
@@ -106,18 +134,22 @@ def get_services(request):
 def get_masters(request):
     service_id = request.GET.get('service_id')
     salon_id = request.GET.get('salon_id')
+    
     if not service_id or not salon_id:
         return JsonResponse({'error': 'Service ID and Salon ID are required'}, status=400)
 
-    masters = Master.objects.filter(
-        service__id=service_id,
-        salon__id=salon_id
-    ).distinct()
+    schedules = Schedule.objects.filter(
+        salon_id=salon_id,
+        master__service__id=service_id
+    ).prefetch_related('master').distinct()
+
+    masters = {schedule.master.id: schedule.master for schedule in schedules}
 
     master_data = [
         {'id': master.id, 'name': master.name, 'profession': master.profession}
-        for master in masters
+        for master in masters.values()
     ]
+    print(master_data)
     return JsonResponse(master_data, safe=False)
 
 
@@ -169,7 +201,8 @@ def get_schedule(request):
     try:
         date = datetime.strptime(date, '%Y-%m-%d').date()
 
-        schedules = Schedule.objects.filter(master_id=master_id, date=date)
+        schedules = Schedule.objects.filter(master_id=master_id,
+                                            date=date)
         print(schedules)
         time_slots = {}
         for schedule in schedules:
@@ -182,6 +215,37 @@ def get_schedule(request):
                 if time_of_day not in time_slots:
                     time_slots[time_of_day] = []
                 time_slots[time_of_day].append(time_slot)
+        print(time_slots)
+        return JsonResponse(time_slots)
+
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
+
+
+def get_schedule_for_salon(request):
+    master_id = request.GET.get('master_id')
+    salon_id = request.GET.get('salon_id')
+    date = request.GET.get('date')
+
+    try:
+        date = datetime.strptime(date, '%Y-%m-%d').date()
+
+        schedules = Schedule.objects.filter(master_id=master_id,
+                                            salon_id=salon_id,
+                                            date=date)
+        print(schedules)
+        time_slots = {}
+        for schedule in schedules:
+            if schedule.is_active:
+                time_slot = {
+                    "time": schedule.time.strftime('%H:%M'),
+                    "salon_id": schedule.salon_id
+                }
+                time_of_day = get_time_of_day(schedule.time)
+                if time_of_day not in time_slots:
+                    time_slots[time_of_day] = []
+                time_slots[time_of_day].append(time_slot)
+        print(time_slots)
         return JsonResponse(time_slots)
 
     except Exception as e:
