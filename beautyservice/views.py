@@ -167,19 +167,16 @@ def get_schedule(request):
     date = request.GET.get('date')
 
     try:
-        # Преобразуем строку даты в объект datetime
         date = datetime.strptime(date, '%Y-%m-%d').date()
 
-        # Получаем все расписания для выбранного мастера и даты
         schedules = Schedule.objects.filter(master_id=master_id, date=date)
         print(schedules)
-        # Разбиваем расписание по времени
         time_slots = {}
         for schedule in schedules:
             if schedule.is_active:
                 time_slot = {
                     "time": schedule.time.strftime('%H:%M'),
-                    "salon_id": schedule.salon_id  # Используем salon_id из модели Schedule
+                    "salon_id": schedule.salon_id
                 }
                 time_of_day = get_time_of_day(schedule.time)
                 if time_of_day not in time_slots:
@@ -192,7 +189,6 @@ def get_schedule(request):
 
 
 def get_time_of_day(time):
-    """Определяем часть дня: утро, день, вечер."""
     if 6 <= time.hour < 12:
         return 'Утро'
     elif 12 <= time.hour < 18:
