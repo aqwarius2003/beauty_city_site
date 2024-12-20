@@ -120,7 +120,7 @@ def service_finally(request):
 
 
 def get_salons(request):
-    unique_salons = Schedule.objects.values('salon__id', 'salon__title').distinct()
+    unique_salons = Schedule.objects.filter(is_active=True).values('salon__id', 'salon__title').distinct()
 
     salon_data = [{'id': salon['salon__id'], 'title': salon['salon__title']} for salon in unique_salons]
     print(salon_data)
@@ -128,7 +128,7 @@ def get_salons(request):
 
 
 def get_all_services(request):
-    schedules = Schedule.objects.all()
+    schedules = Schedule.objects.filter(is_active=True)
     service_list = []
     unique_service_ids = set()
 
@@ -152,7 +152,7 @@ def get_all_services(request):
 
 
 def get_all_masters(request):
-    masters = Master.objects.filter(schedules__isnull=False).distinct()
+    masters = Master.objects.filter(schedules__isnull=False, schedules__is_active=True).distinct()
     master_data = [{'id': master.id, 'name': master.name, 'profession': master.profession} for master in masters]
     print(master_data)
     return JsonResponse(master_data, safe=False)
@@ -161,7 +161,7 @@ def get_all_masters(request):
 def get_services(request):
     salon_id = request.GET.get('salon_id')
     if salon_id:
-        schedules = Schedule.objects.filter(salon_id=salon_id).prefetch_related('master__service')
+        schedules = Schedule.objects.filter(salon_id=salon_id, is_active=True).prefetch_related('master__service')
         unique_services = {}
 
         for schedule in schedules:
@@ -193,7 +193,9 @@ def get_masters(request):
 
     schedules = Schedule.objects.filter(
         salon_id=salon_id,
-        master__service__id=service_id
+        master__service__id=service_id,
+        is_active=True
+
     ).prefetch_related('master').distinct()
 
     masters = {schedule.master.id: schedule.master for schedule in schedules}
@@ -255,7 +257,7 @@ def get_schedule(request):
         date = datetime.strptime(date, '%Y-%m-%d').date()
 
         schedules = Schedule.objects.filter(master_id=master_id,
-                                            date=date)
+                                            date=date, is_active=True)
         print(schedules)
         time_slots = {}
         for schedule in schedules:
@@ -287,7 +289,8 @@ def get_schedule_for_salon(request):
 
         schedules = Schedule.objects.filter(master_id=master_id,
                                             salon_id=salon_id,
-                                            date=date)
+                                            date=date,
+                                            is_active=True)
         print(f"Schedules found: {schedules.count()}")
         time_slots = {}
         for schedule in schedules:
