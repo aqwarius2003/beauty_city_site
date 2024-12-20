@@ -280,7 +280,7 @@
                             v-for="timeSlot in times"
                             :key="timeSlot.time"
                             @click="selectTime(timeSlot)"
-                            class="time__elems_btn">
+                             :class="['time__elems_btn', { 'active': timeSlot.time === selectedTime }]">
                       ${ timeSlot.time }
                     </button>
                   </div>
@@ -532,9 +532,9 @@
             ,
 
             // Чтобы при нажатии на время выбирался салон
-            selectTime(time) {
-                this.selectedTime = time.time;
-                this.selectedSalon = time.salon_id;
+            selectTime(timeSlot) {
+                this.selectedTime = timeSlot.time;  // Устанавливаем выбранное время
+                this.selectedSalon = timeSlot.salon_id;  // Устанавливаем выбранный салон
             }
             ,
 

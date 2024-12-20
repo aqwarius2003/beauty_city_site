@@ -1059,8 +1059,9 @@ footer {
 }
 
 .time__elems_btn.active {
-    color: #FFFFFF;
-    background: #FFCD07;
+  color: #FFFFFF;
+  background: #FFCD07;  /* Цвет фона при активации */
+  border-color: #FFCD07;  /* Если нужно, меняем цвет границы */
 }
 
 .time__elems_elem {
