@@ -297,7 +297,7 @@ def create_order(request):
         name = data.get('fname')
         phone = data.get('tel')
         question = data.get('contactsTextarea', '')
-
+        print(f"Salon: {salon_title}, Service: {service_title}, Master: {master_name}, Time: {time}, Date: {date}, Name: {name}, Phone: {phone}")
         if not (salon_title and service_title and master_name and time and date and name and phone):
             return JsonResponse({'success': False, 'error': 'Все обязательные поля должны быть заполнены.'}, status=400)
 
@@ -313,5 +313,9 @@ def create_order(request):
             master=master,
             service=service,
             price=service.price,
+            date=schedule.date,
+            time=schedule.time
         )
+        schedule.is_active = False
+        schedule.save()
         return JsonResponse({'success': True, 'message': 'Запись успешно создана!', 'note_id': note.id})
