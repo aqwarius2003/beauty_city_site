@@ -236,6 +236,8 @@ def get_schedule(request):
                 if time_of_day not in time_slots:
                     time_slots[time_of_day] = []
                 time_slots[time_of_day].append(time_slot)
+        for key in time_slots:
+            time_slots[key].sort(key=lambda x: datetime.strptime(x["time"], '%H:%M'))
         sorted_time_slots = {key: time_slots[key] for key in ["Утро", "День", "Вечер"] if key in time_slots}
         return JsonResponse(sorted_time_slots)
 
@@ -266,7 +268,8 @@ def get_schedule_for_salon(request):
                 if time_of_day not in time_slots:
                     time_slots[time_of_day] = []
                 time_slots[time_of_day].append(time_slot)
-
+        for key in time_slots:
+            time_slots[key].sort(key=lambda x: datetime.strptime(x["time"], '%H:%M'))
         sorted_time_slots = {key: time_slots[key] for key in ["Утро", "День", "Вечер"] if key in time_slots}
         print(sorted_time_slots)
         return JsonResponse(sorted_time_slots)
