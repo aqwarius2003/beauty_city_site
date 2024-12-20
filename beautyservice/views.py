@@ -14,10 +14,10 @@ def auth_view(request):
         print(f"Phone: {phone}")
         try:
             client = Client.objects.get(phone=phone)
-            # Если клиент найден, возвращаем URL для перенаправления
             return JsonResponse({'redirect_url': f'/notes/{client.id}/'})
         except Client.DoesNotExist:
-            return JsonResponse({'error': 'Клиент не найден.'}, status=404)
+            client = Client.objects.create(phone=phone)
+            return JsonResponse({'redirect_url': f'/notes/{client.id}/'})
     return render(request, 'auth.html')
 
 
