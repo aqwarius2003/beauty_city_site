@@ -394,10 +394,7 @@ $(document).ready(function() {
 		$('#tipsModal').arcticmodal();
 	})
 	
-	$('.authPopup__form').submit(function() {
-		$('#confirmModal').arcticmodal();
-		return false
-	})
+	
 
 	//service
 	$('.time__items .time__elems_elem .time__elems_btn').click(function(e) {
