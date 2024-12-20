@@ -343,8 +343,14 @@ def create_order(request):
         service = Service.objects.get(name=service_title)
         master = Master.objects.get(name=master_name)
         schedule = Schedule.objects.get(salon=salon, master=master, date=date, time=time)
-        client, created = Client.objects.get_or_create(name=name, phone=phone)
-
+        client, created = Client.objects.get_or_create(phone=phone)
+        if created:
+            client.name = name
+            client.save()
+        else:
+            client.name = name
+            client.save()
+            
         note = Note.objects.create(
             salon=salon,
             client=client,
