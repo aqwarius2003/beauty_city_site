@@ -236,8 +236,8 @@ def get_schedule(request):
                 if time_of_day not in time_slots:
                     time_slots[time_of_day] = []
                 time_slots[time_of_day].append(time_slot)
-        print(time_slots)
-        return JsonResponse(time_slots)
+        sorted_time_slots = {key: time_slots[key] for key in ["Утро", "День", "Вечер"] if key in time_slots}
+        return JsonResponse(sorted_time_slots)
 
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
@@ -247,13 +247,14 @@ def get_schedule_for_salon(request):
     master_id = request.GET.get('master_id')
     salon_id = request.GET.get('salon_id')
     date = request.GET.get('date')
-
+    print(f"Master ID: {master_id}, Salon ID: {salon_id}, Date: {date}")
     try:
         date = datetime.strptime(date, '%Y-%m-%d').date()
 
         schedules = Schedule.objects.filter(master_id=master_id,
                                             salon_id=salon_id,
                                             date=date)
+        print(f"Schedules found: {schedules.count()}")
         time_slots = {}
         for schedule in schedules:
             if schedule.is_active:
@@ -267,6 +268,7 @@ def get_schedule_for_salon(request):
                 time_slots[time_of_day].append(time_slot)
 
         sorted_time_slots = {key: time_slots[key] for key in ["Утро", "День", "Вечер"] if key in time_slots}
+        print(sorted_time_slots)
         return JsonResponse(sorted_time_slots)
 
     except Exception as e:
