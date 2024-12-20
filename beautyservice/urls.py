@@ -6,7 +6,8 @@ app_name = "beautyservice"
 
 urlpatterns = [
     path("", views.index, name="index"),
-    path("notes/", views.notes, name="notes"),
+    path('auth/', views.auth_view, name='auth'),
+    path('notes/<int:client_id>/', views.notes, name='notes'),
     path("popup/", views.popup, name="popup"),
     path("service/", views.service, name="service"),
     path("service_finally/", views.service_finally, name="service_finally"),

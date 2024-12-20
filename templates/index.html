@@ -721,11 +721,11 @@
         <div class="box-modal_close arcticmodal-close">
           <img src="{% static 'img/x.svg' %}" alt="x" />
         </div>
-        <div class="popup__title authPopup__title">Войти по коду</div>
+        <div class="popup__title authPopup__title">Войти</div>
         <p class="popup__text authPopup__text">
-          Введите свой номер телефона, мы вышлем на него код
+          Введите свой номер телефона
         </p>
-        <form action="#" class="authPopup__form">
+        <form action="{% url 'beautyservice:auth' %}" method="post" class="authPopup__form">
           <div class="contacts__form_inputBlock">
             <input
               type="text"
@@ -813,5 +813,34 @@
     <script src="{% static 'js/air-datepicker.js' %}"></script>
     <script src="{% static 'js/jquery.arcticmodal-0.3.min.js' %}"></script>
     <script src="{% static 'js/main.js' %}"></script>
+    <script>
+      document.querySelector('.authPopup__form').addEventListener('submit', async function (event) {
+        event.preventDefault();
+  
+        const formData = {
+            tel: this.querySelector('input[name="tel"]').value,
+        };
+  
+        const response = await fetch('/auth/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token }}',
+            },
+            body: JSON.stringify(formData),
+        });
+  
+        const result = await response.json();
+        if (response.ok) {
+          // Если клиент найден, перенаправляем на нужный URL
+          window.location.href = result.redirect_url; // Перенаправление на URL, возвращенный сервером
+      } else {
+          // Обработка ошибки, если клиент не найден
+          alert(result.error || 'Произошла ошибка при авторизации.');
+      }
+  
+    });
+    </script>
+  
   </body>
 </html>

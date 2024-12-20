@@ -1,9 +1,24 @@
 from django.http import JsonResponse
-from django.shortcuts import render
+from django.shortcuts import render, redirect
+from django.utils import timezone
 
 from .models import Master, Salon, Service, Category, Schedule, Note, Client
 from datetime import datetime
 import json
+
+
+def auth_view(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        phone = data.get('tel')
+        print(f"Phone: {phone}")
+        try:
+            client = Client.objects.get(phone=phone)
+            # Если клиент найден, возвращаем URL для перенаправления
+            return JsonResponse({'redirect_url': f'/notes/{client.id}/'})
+        except Client.DoesNotExist:
+            return JsonResponse({'error': 'Клиент не найден.'}, status=404)
+    return render(request, 'auth.html')
 
 
 def index(request):
@@ -18,20 +33,37 @@ def index(request):
     )
 
 
-def notes(request, client_id=1):
-    notes = Note.objects \
-        .filter(client_id=client_id) \
-        .select_related('service', 'master', 'salon')
-    total_price = 0
-    for note in notes:
-        total_price += note.price
+def notes(request, client_id):
+    now = timezone.now()
+    current_date = now.date()
+    current_time = now.time()
+    print(current_time)
+    client = Client.objects.get(id=client_id)
 
+    upcoming_notes = Note.objects.filter(client_id=client_id,
+                                         date__gt=current_date
+                                         ) | Note.objects.filter(client_id=client_id,
+                                                                 date=current_date,
+                                                                 time__gt=current_time
+                                                                 )
+    past_notes = Note.objects.filter(client_id=client_id,
+                                     date__lt=current_date
+                                     ) | Note.objects.filter(client_id=client_id,
+                                                             date=current_date,
+                                                             time__lt=current_time
+                                                             )
+    
+    total_price = sum(note.price for note in upcoming_notes)
+    print(total_price)
     context = {
-        'notes': notes,
-        'total_price': total_price
+        "upcoming_notes": upcoming_notes,
+        "past_notes": past_notes,
+        "total_price": total_price,
+        "client": client,
+        "client_id": client_id
     }
 
-    return render(request, "../templates/notes.html", context=context)
+    return render(request, "notes.html", context=context)
 
 
 def popup(request):
