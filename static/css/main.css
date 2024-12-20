@@ -282,10 +282,12 @@ header .row {
     padding-left: 10px;
     padding-right: 10px;
 }
-.btn__next{
+
+.btn__next {
     text-decoration: none;
     color: grey;
 }
+
 .services__elems {
     padding-left: 16px;
     padding-bottom: 18px;
@@ -1059,9 +1061,9 @@ footer {
 }
 
 .time__elems_btn.active {
-  color: #FFFFFF;
-  background: #FFCD07;  /* Цвет фона при активации */
-  border-color: #FFCD07;  /* Если нужно, меняем цвет границы */
+    color: #FFFFFF;
+    background: #FFCD07; /* Цвет фона при активации */
+    border-color: #FFCD07; /* Если нужно, меняем цвет границы */
 }
 
 .time__elems_elem {
@@ -1572,7 +1574,6 @@ footer {
     /* identical to box height, or 23px */
     border: none;
 
-
     /* основной 2 */
 
     color: #F6A912;
@@ -1719,6 +1720,7 @@ footer {
 }
 
 .notes__main_block__img {
+
     max-width: 30%;
     margin-right: 15px;
     object-fit: cover;
@@ -1891,6 +1893,7 @@ footer {
     box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.02);
     border-radius: 5px;
     margin-top: 121px;
+    text-align: center;
 }
 
 .notes__pay_btn {
@@ -2884,4 +2887,15 @@ footer {
     .popup .contacts__form_iunput {
         width: 95%
     }
+}
+
+.notes__pay_block_sum {
+
+    font-weight: 500;
+    font-size: 24px;
+    line-height: 127.52%;
+    justify-self: center;
+    align-self: center;
+    /* identical to box height, or 31px */
+
 }
