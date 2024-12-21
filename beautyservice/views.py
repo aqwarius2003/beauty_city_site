@@ -363,3 +363,31 @@ def create_order(request):
         schedule.is_active = False
         schedule.save()
         return JsonResponse({'success': True, 'message': 'Запись успешно создана!', 'note_id': note.id})
+
+
+def get_master_for_service(request):
+    service_id = request.GET.get('service_id')
+
+    try:
+        master_data = []
+        master = Master.objects.filter(service=service_id, schedules__is_active=True).distinct()
+        for m in master:
+            master_data.append({'id': m.id, 'name': m.name, 'profession': m.profession})
+        return JsonResponse(master_data, safe=False)
+    except Master.DoesNotExist:
+        return JsonResponse({'error': 'Master not found'}, status=404)
+
+def get_salon_for_service(request):
+    service_id = request.GET.get('service_id')
+
+    try:
+        master = Master.objects.filter(service=service_id, schedules__is_active=True).distinct()
+
+        salon_data = []
+        salon = Salon.objects.filter(masters__service=service_id, masters__schedules__is_active=True).distinct()
+        for s in salon:
+            salon_data.append({'id': s.id, 'title': s.title})
+        print(salon_data)
+        return JsonResponse(salon_data, safe=False)
+    except Salon.DoesNotExist:
+        return JsonResponse({'error': 'Salon not found'}, status=404)

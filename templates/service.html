@@ -441,23 +441,16 @@
                 this.isServiceListVisible = !this.isServiceListVisible;
             },
             toggleCategory(category) {
-
-                // Переключаем категорию
                 this.activeCategory = this.activeCategory === category ? null : category;
-
             },
 
             toggleMasterList() {
                 this.isMasterListVisible = !this.isMasterListVisible;
             },
 
-            // Выбор услуги
             selectService(serviceId) {
-                // Находим услугу по ID
                 this.selectedServiceForlink = serviceId
-                console.log(serviceId);
                 const selectedService = this.services.find(service => service.id === serviceId);
-                console.log(selectedService);
 
                 if (selectedService) {
                     this.selectedService = selectedService;
@@ -582,20 +575,34 @@
 
             // Эта хрень загружает мастеров при изменении услуги
             loadMasters(serviceId) {
-                if (this.selectedMaster) {
+
+                if (this.selectedMaster && serviceId && !this.selectedSalon) {
                     fetch(`/api/get_salons_for_masters_and_services/?service_id=${serviceId}&master_id=${this.selectedMaster}`)
                         .then(response => response.json())
                         .then(data => {
                             this.salons = data;
+                            console.log(data)
                         })
-                } else {
-                    if (!this.selectedService) return;
+                } else if (serviceId && this.selectedSalon && !this.selectedMaster) {
                     fetch(`/api/masters/?service_id=${serviceId}&salon_id=${this.selectedSalon}`)
                         .then(response => response.json())
                         .then(data => {
                             this.masters = data;
+
                         })
                         .catch(error => console.error('Ошибка при загрузке мастеров:', error));
+                } else if (serviceId && !this.selectedSalon && !this.selectedMaster) {
+                    fetch(`api/get_master_for_service/?service_id=${serviceId}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            this.masters = data;
+
+                        })
+                    fetch(`api/get_salon_for_service/?service_id=${serviceId}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            this.salons= data;
+                        })
                 }
             }
             ,
