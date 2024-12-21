@@ -177,86 +177,38 @@
           </div>
 
 
+          <button class="accordion" @click="toggleServiceList">
+            (Выберите услугу)
+          </button>
+          <div class="panel" v-show="isServiceListVisible">
+            <div v-for="(group, category) in groupedServices" :key="category">
+              <button class="accordion" @click="toggleCategory(category)">
+                ${ category }
+              </button>
+              <div :class="['panel', { show: activeCategory === category }]">
+                <div v-if="activeCategory === category">
+                  <div class="accordion__block_items">
+                    <div v-for="service in group" :key="service.id" @click="selectService(service.id)"
+                         class="accordion__block_item">
+                      <div class="accordion__block_item_intro">${ service.name }</div>
+                      <div class="accordion__block_item_address">${ service.price } ₽</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
 
 
-          <label for="selectedService">Выберите услугу</label>
-          <select v-model="selectedService" @change="loadMasters" v-show="services.length > 0"
-                  class="service__form_select">
-            <option value="" disabled selected>Выберите услугу</option>
-            <optgroup v-for="(group, category) in groupedServices" :label="category" :key="category">
-              <option v-for="service in group" :value="service.id" :key="service.id">
-                ${ service.name } (${ service.price } ₽)
-              </option>
-            </optgroup>
-          </select>
-
-
-          <label for="selectedMaster">Выберите мастера</label>
-          <select v-model="selectedMaster" @change="showServicesForMaster" v-show="masters.length > 0"
-                  class="service__form_select">
-            <option value="" disabled selected>Выберите мастера</option>
-            <option v-for="master in masters" :value="master.id" :key="master.id">
-              ${ master.name }
-            </option>
-          </select>
-
-          <!-- Отладка -->
-          <p v-if="services.length === 0">Услуги не загружены или нет данных для выбранного салона.</p>
-
-
-          {#        <div class="service__form_block service__salons">#}
-          {#          <button class="accordion">(Выберите салон)</button>#}
-          {#          <div class="panel">#}
-          {#            {% for salon in salons %}#}
-          {#              <div class="accordion__block fic">#}
-          {#                <div class="accordion__block_intro">#}
-          {#                  {{ salon.title }}#}
-          {#                </div>#}
-          {#                <div class="accordion__block_address">#}
-          {#                  {{ salon.address }}#}
-          {#                </div>#}
-          {#              </div>#}
-          {#            {% endfor %}#}
-          {#          </div>#}
-          {#          <div class="service__form_block service__services">#}
-          {#            <button class="accordion">(Выберите услугу)</button>#}
-          {#            <div class="panel">#}
-          {#              {% for name_category, services in info_about_service.items %}#}
-          {##}
-          {#                <button class="accordion">{{ name_category }}</button>#}
-          {#                <div class="panel">#}
-          {#                  <!-- <div class="accordion__block_intro">Макияж</div> -->#}
-          {#                  <div class="accordion__block_items">#}
-          {#                    {% for service in services %}#}
-          {##}
-          {#                      <div class="accordion__block_item fic">#}
-          {#                        <div class="accordion__block_item_intro">#}
-          {#                          {{ service.0 }}#}
-          {#                        </div>#}
-          {#                        <div class="accordion__block_item_address">{{ service.1 }}</div>#}
-          {#                      </div>#}
-          {#                    {% endfor %}#}
-          {#                  </div>#}
-          {#                </div>#}
-          {#              {% endfor %}#}
-          {#            </div>#}
-          {#          </div>#}
-          {#          <div class="service__form_block service__masters">#}
-          {#            <button class="accordion">(Выберите мастера)</button>#}
-          {#            <div class="panel">#}
-          {#              {% for master in masters %}#}
-          {#                <div class="accordion__block fic" data-master-id="{{ master.id }}">#}
-          {#                  <div class="accordion__block_intro">#}
-          {#                    {{ master.name }}#}
-          {#                  </div>#}
-          {#                  <div class="accordion__block_address">#}
-          {#                    {{ master.profession }}#}
-          {#                  </div>#}
-          {#                </div>#}
-          {#              {% endfor %}#}
-          {#            </div>#}
-          {#          </div>#}
-          {#        </div>#}
+          <!-- Аккордеон для выбора мастера -->
+          <button class="accordion" @click="toggleMasterList">
+            (Выберите мастера)
+          </button>
+          <div class="panel" v-show="isMasterListVisible">
+            <div v-for="master in masters" :key="master.id" @click="selectMaster(master.id)" class="accordion__block">
+              <div class="accordion__block_intro">${ master.name }</div>
+            </div>
+          </div>
         </form>
       </div>
     </div>
@@ -455,13 +407,16 @@
                 timeSlots: null,
                 selectedTime: null,
 
-                isSalonListVisible: false
+                isSalonListVisible: false,
+                isServiceListVisible: false,
+                isMasterListVisible: false,
+                activeCategory: null,        // категория, которая раскрыта
             };
         },
         //Для группировки по категориям
         computed: {
             groupedServices() {
-                return this.services.reduce((acc, service) => {
+                const grouped = this.services.reduce((acc, service) => {
                     const category = service.category;
                     if (!acc[category]) {
                         acc[category] = [];
@@ -469,6 +424,8 @@
                     acc[category].push(service);
                     return acc;
                 }, {});
+
+                return grouped;
             },
 
             servicesForSelectedCategory() {
@@ -485,15 +442,50 @@
 
         },
         methods: {
+            toggleServiceList() {
+                this.isServiceListVisible = !this.isServiceListVisible;
+            },
+            toggleCategory(category) {
+
+                // Переключаем категорию
+                this.activeCategory = this.activeCategory === category ? null : category;
+
+            },
+
+            // Переключение видимости аккордеона для мастеров
+            toggleMasterList() {
+                this.isMasterListVisible = !this.isMasterListVisible;
+            },
+
+            // Выбор услуги
+            selectService(serviceId) {
+                // Находим услугу по ID
+                const selectedService = this.services.find(service => service.id === serviceId);
+                console.log(selectedService);
+
+                if (selectedService) {
+                    this.selectedService = selectedService;
+                    this.loadMasters(selectedService.id);  // Загружаем мастеров для выбранной услуги
+                }
+            },
+
+            // Выбор мастера
+            selectMaster(masterId) {
+                this.selectedMaster = masterId;
+                this.showServicesForMaster(masterId);  // Загружаем услуги для выбранного мастера
+            }
+            ,
             toggleSalonList() {
                 this.isSalonListVisible = !this.isSalonListVisible;
-            },
+            }
+            ,
 
             // Метод для выбора салона из списка
             selectSalon(salonId) {
                 this.selectedSalon = salonId;
                 this.loadServices(salonId); // Загружаем услуги для выбранного салона
-            },
+            }
+            ,
             //! TODO Баг с двумя календарями
 
             initDatepicker() {
@@ -509,12 +501,12 @@
                     inline: true,
                     dateFormat: 'yyyy-MM-dd',
                     onSelect: ({formattedDate}) => {
-                        console.log('Выбрана дата:', formattedDate);
                         this.selectedDate = formattedDate;
                         this.loadSchedule();
                     }
                 });
-            },
+            }
+            ,
 
 
             loadSchedule() {
@@ -596,16 +588,16 @@
             ,
 
             // Эта хрень загружает мастеров при изменении услуги
-            loadMasters() {
+            loadMasters(serviceId) {
                 if (this.selectedMaster) {
-                    fetch(`/api/get_salons_for_masters_and_services/?service_id=${this.selectedService}&master_id=${this.selectedMaster}`)
+                    fetch(`/api/get_salons_for_masters_and_services/?service_id=${serviceId}&master_id=${this.selectedMaster}`)
                         .then(response => response.json())
                         .then(data => {
                             this.salons = data;
                         })
                 } else {
                     if (!this.selectedService) return;
-                    fetch(`/api/masters/?service_id=${this.selectedService}&salon_id=${this.selectedSalon}`)
+                    fetch(`/api/masters/?service_id=${serviceId}&salon_id=${this.selectedSalon}`)
                         .then(response => response.json())
                         .then(data => {
                             this.masters = data;
@@ -629,6 +621,15 @@
     ;
 
 </script>
+<style>
+    .panel {
+        display: none; /* Панель скрыта по умолчанию */
+    }
+
+    .panel.show {
+        display: block; /* Панель видима, если добавлен класс show */
+    }
+</style>
 <script src="{% static 'js/main.js' %}"></script>
 </body>
 </html>
