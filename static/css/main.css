@@ -2899,3 +2899,7 @@ footer {
     /* identical to box height, or 31px */
 
 }
+
+.time__block{
+    padding-bottom: 30px;
+}
