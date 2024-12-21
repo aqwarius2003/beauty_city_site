@@ -474,7 +474,6 @@
                 this.loadServices(salonId);
             }
             ,
-            //! TODO Баг с двумя календарями
 
             initDatepicker() {
                 const datepickerElement = document.getElementById('datepickerHere');
@@ -487,23 +486,21 @@
                     inline: true,
                     dateFormat: 'yyyy-MM-dd',
                     onSelect: ({formattedDate}) => {
-                        this.selectedDate = formattedDate;  // Сохраняем выбранную дату
-                        this.loadSchedule();  // Загружаем доступные временные слоты
+                        this.selectedDate = formattedDate;
+                        this.loadSchedule();
 
-                        // Загружаем салоны для выбранной даты
-                        this.loadSalonsForDate(formattedDate);  // Функция для загрузки салонов
+                        this.loadSalonsForDate(formattedDate);
                     }
                 });
             },
 
             loadSalonsForDate(date) {
-                // Предполагаем, что на сервере есть API для получения салонов по выбранной дате
                 fetch(`/api/get_salons_for_date/?date=${date}&master=${this.selectedMaster}`)
                     .then(response => response.json())
                     .then(data => {
                         if (data.length > 0) {
-                            this.salons = data;  // Обновляем список салонов
-                            this.selectedSalon = data[0].id;  // Автоматически выбираем первый салон
+                            this.salons = data;
+                            this.selectedSalon = data[0].id;
                         } else {
                             this.salons = [];
                             console.error('Нет доступных салонов для выбранной даты');

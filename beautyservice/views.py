@@ -384,10 +384,9 @@ def get_salon_for_service(request):
         master = Master.objects.filter(service=service_id, schedules__is_active=True).distinct()
 
         salon_data = []
-        salon = Salon.objects.filter(masters__service=service_id, masters__schedules__is_active=True).distinct()
+        salon = Salon.objects.filter(masters__service=service_id, masters__schedules__is_active=True, masters__in=master).distinct()
         for s in salon:
             salon_data.append({'id': s.id, 'title': s.title})
-        print(salon_data)
         return JsonResponse(salon_data, safe=False)
     except Salon.DoesNotExist:
         return JsonResponse({'error': 'Salon not found'}, status=404)
@@ -403,7 +402,6 @@ def get_salons_for_date(request):
         salon = Salon.objects.filter(schedules__date=date, schedules__is_active=True, schedules__master=master).distinct()
         for s in salon:
             salon_data.append({'id': s.id, 'title': s.title})
-        print(salon_data)
         return JsonResponse(salon_data, safe=False)
     except Salon.DoesNotExist:
         return JsonResponse({'error': 'Salon not found'}, status=404)
