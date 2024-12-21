@@ -484,16 +484,33 @@
                 }
 
                 new AirDatepicker('#datepickerHere', {
-
                     inline: true,
                     dateFormat: 'yyyy-MM-dd',
                     onSelect: ({formattedDate}) => {
-                        this.selectedDate = formattedDate;
-                        this.loadSchedule();
+                        this.selectedDate = formattedDate;  // Сохраняем выбранную дату
+                        this.loadSchedule();  // Загружаем доступные временные слоты
+
+                        // Загружаем салоны для выбранной даты
+                        this.loadSalonsForDate(formattedDate);  // Функция для загрузки салонов
                     }
                 });
-            }
-            ,
+            },
+
+            loadSalonsForDate(date) {
+                // Предполагаем, что на сервере есть API для получения салонов по выбранной дате
+                fetch(`/api/get_salons_for_date/?date=${date}&master=${this.selectedMaster}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.length > 0) {
+                            this.salons = data;  // Обновляем список салонов
+                            this.selectedSalon = data[0].id;  // Автоматически выбираем первый салон
+                        } else {
+                            this.salons = [];
+                            console.error('Нет доступных салонов для выбранной даты');
+                        }
+                    })
+                    .catch(error => console.error('Ошибка при загрузке салонов:', error));
+            },
 
 
             loadSchedule() {
@@ -601,7 +618,7 @@
                     fetch(`api/get_salon_for_service/?service_id=${serviceId}`)
                         .then(response => response.json())
                         .then(data => {
-                            this.salons= data;
+                            this.salons = data;
                         })
                 }
             }

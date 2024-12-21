@@ -31,5 +31,6 @@ urlpatterns = [
     path('create_order/', views.create_order, name='create_order'),
     path('service/api/get_master_for_service/', views.get_master_for_service, name='get_master_for_service'),
     path('service/api/get_salon_for_service/', views.get_salon_for_service, name='get_salon_for_service'),
+    path('api/get_salons_for_date/', views.get_salons_for_date, name='get_salons_for_date'),
 ]
 

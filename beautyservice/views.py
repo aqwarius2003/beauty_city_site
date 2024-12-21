@@ -391,3 +391,19 @@ def get_salon_for_service(request):
         return JsonResponse(salon_data, safe=False)
     except Salon.DoesNotExist:
         return JsonResponse({'error': 'Salon not found'}, status=404)
+
+
+def get_salons_for_date(request):
+    date = request.GET.get('date')
+    master = request.GET.get('master')
+
+    master = Master.objects.get(id=master)
+    try:
+        salon_data = []
+        salon = Salon.objects.filter(schedules__date=date, schedules__is_active=True, schedules__master=master).distinct()
+        for s in salon:
+            salon_data.append({'id': s.id, 'title': s.title})
+        print(salon_data)
+        return JsonResponse(salon_data, safe=False)
+    except Salon.DoesNotExist:
+        return JsonResponse({'error': 'Salon not found'}, status=404)
