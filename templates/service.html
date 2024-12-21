@@ -158,17 +158,10 @@
         </div>
 
         <form action="#" class="service__form">
-          <!-- <select name="selectSalon" id="" class="service__form_select">
-          <option value="" selected>(Выберите салон)</option>
-          <option value="salon1" >Салон 1</option>
-          <option value="salon2" >Салон 2</option>
-          <option value="salon3" >Салон 3</option>
-        </select> -->
           <button class="accordion" @click="toggleSalonList">
             (Выберите салон)
           </button>
 
-          <!-- Панель с салоны, которая отображается/скрывается при клике на кнопку -->
           <div class="panel" v-show="isSalonListVisible">
             <div v-for="salon in salons" :key="salon.id" @click="selectSalon(salon.id)" class="accordion__block">
               <div class="accordion__block_intro">${ salon.title }</div>
@@ -203,7 +196,6 @@
           </div>
 
 
-          <!-- Аккордеон для выбора мастера -->
           <button class="accordion" @click="toggleMasterList">
             (Выберите мастера)
           </button>
@@ -230,7 +222,6 @@
 
             </div>
             <div class="col-md-8">
-              <!-- Отображение доступного времени -->
               <div class="time__elems" v-if="timeSlots">
                 <div v-for="(times, partOfDay) in timeSlots" :key="partOfDay" class="time__items">
                   <div class="time__elems_intro">${ partOfDay }</div>
@@ -415,10 +406,9 @@
                 isMasterListVisible: false,
                 activeCategory: null,
 
-                selectedServiceForlink: null,// категория, которая раскрыта
+                selectedServiceForlink: null,
             };
         },
-        //Для группировки по категориям
         computed: {
             groupedServices() {
                 const grouped = this.services.reduce((acc, service) => {
@@ -457,7 +447,6 @@
 
             },
 
-            // Переключение видимости аккордеона для мастеров
             toggleMasterList() {
                 this.isMasterListVisible = !this.isMasterListVisible;
             },
@@ -477,10 +466,9 @@
                 }
             },
 
-            // Выбор мастера
             selectMaster(masterId) {
                 this.selectedMaster = masterId;
-                this.showServicesForMaster(masterId);  // Загружаем услуги для выбранного мастера
+                this.showServicesForMaster(masterId);
             }
             ,
             toggleSalonList() {
@@ -488,10 +476,9 @@
             }
             ,
 
-            // Метод для выбора салона из списка
             selectSalon(salonId) {
                 this.selectedSalon = salonId;
-                this.loadServices(salonId); // Загружаем услуги для выбранного салона
+                this.loadServices(salonId);
             }
             ,
             //! TODO Баг с двумя календарями
@@ -499,7 +486,6 @@
             initDatepicker() {
                 const datepickerElement = document.getElementById('datepickerHere');
 
-                // Удаляем предыдущий календарь, если он существует
                 if (datepickerElement.airDatepicker) {
                     datepickerElement.airDatepicker.destroy();
                 }
@@ -546,10 +532,9 @@
             }
             ,
 
-            // Чтобы при нажатии на время выбирался салон
             selectTime(timeSlot) {
-                this.selectedTime = timeSlot.time;  // Устанавливаем выбранное время
-                this.selectedSalon = timeSlot.salon_id;  // Устанавливаем выбранный салон
+                this.selectedTime = timeSlot.time;
+                this.selectedSalon = timeSlot.salon_id;
             }
             ,
 
@@ -631,11 +616,11 @@
 </script>
 <style>
     .panel {
-        display: none; /* Панель скрыта по умолчанию */
+        display: none;
     }
 
     .panel.show {
-        display: block; /* Панель видима, если добавлен класс show */
+        display: block;
     }
 
 </style>
