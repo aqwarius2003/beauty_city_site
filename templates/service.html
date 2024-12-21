@@ -177,8 +177,8 @@
           </div>
 
 
-          <button class="accordion" @click="toggleServiceList">
-            (Выберите услугу)
+          <button class="accordion" @click="toggleServiceList" :class="{'selected': selectedService}">
+            ${ selectedService ? selectedService.name : '(Выберите услугу)' }
           </button>
           <div class="panel" v-show="isServiceListVisible">
             <div v-for="(group, category) in groupedServices" :key="category">
@@ -189,7 +189,10 @@
                 <div v-if="activeCategory === category">
                   <div class="accordion__block_items">
                     <div v-for="service in group" :key="service.id" @click="selectService(service.id)"
-                         class="accordion__block_item">
+                         class="accordion__block_item"
+
+                    >
+
                       <div class="accordion__block_item_intro">${ service.name }</div>
                       <div class="accordion__block_item_address">${ service.price } ₽</div>
                     </div>
@@ -252,7 +255,7 @@
           <div class="row">
             <div class="col-md-12">
               <button class="time__btns_next" :disabled="!selectedTime">
-                <a :href="`{% url 'beautyservice:service_finally' %}?salon=${selectedSalon}&service=${selectedService}&master=${selectedMaster}&date=${selectedDate}&time=${selectedTime}`"
+                <a :href="`{% url 'beautyservice:service_finally' %}?salon=${selectedSalon}&service=${selectedServiceForlink}&master=${selectedMaster}&date=${selectedDate}&time=${selectedTime}`"
                    class="btn__next">Далее</a>
               </button>
 
@@ -410,7 +413,9 @@
                 isSalonListVisible: false,
                 isServiceListVisible: false,
                 isMasterListVisible: false,
-                activeCategory: null,        // категория, которая раскрыта
+                activeCategory: null,
+
+                selectedServiceForlink: null,// категория, которая раскрыта
             };
         },
         //Для группировки по категориям
@@ -460,12 +465,15 @@
             // Выбор услуги
             selectService(serviceId) {
                 // Находим услугу по ID
+                this.selectedServiceForlink = serviceId
+                console.log(serviceId);
                 const selectedService = this.services.find(service => service.id === serviceId);
                 console.log(selectedService);
 
                 if (selectedService) {
                     this.selectedService = selectedService;
-                    this.loadMasters(selectedService.id);  // Загружаем мастеров для выбранной услуги
+                    this.loadMasters(selectedService.id);
+                    this.isServiceListVisible = false;
                 }
             },
 
@@ -629,6 +637,7 @@
     .panel.show {
         display: block; /* Панель видима, если добавлен класс show */
     }
+
 </style>
 <script src="{% static 'js/main.js' %}"></script>
 </body>
