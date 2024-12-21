@@ -483,18 +483,16 @@
             initDatepicker() {
                 const datepickerElement = document.getElementById('datepickerHere');
 
-                if (datepickerElement.airDatepicker) {
-                    datepickerElement.airDatepicker.destroy();
-                }
-
                 new AirDatepicker('#datepickerHere', {
                     inline: true,
                     dateFormat: 'yyyy-MM-dd',
                     onSelect: ({formattedDate}) => {
+
                         this.selectedDate = formattedDate;
                         this.loadSchedule();
-
-                        this.loadSalonsForDate(formattedDate);
+                        if (formattedDate) {
+                            this.loadSalonsForDate(formattedDate);
+                        }
                     }
                 });
             },
@@ -511,7 +509,6 @@
                             console.error('Нет доступных салонов для выбранной даты');
                         }
                     })
-                    .catch(error => console.error('Ошибка при загрузке салонов:', error));
             },
 
 
