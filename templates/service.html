@@ -157,9 +157,9 @@
           <button class="service__btn btn">Запись по телефону</button>
         </div>
 
-        <form action="#" class="service__form">
+        <form @submit.prevent="handleSubmit" class="service__form">
           <button class="accordion" @click="toggleSalonList">
-            (Выберите салон)
+            ${selectedSalonTitle ? selectedSalonTitle : '(Выберите салон)' }
           </button>
 
           <div class="panel" v-show="isSalonListVisible">
@@ -407,6 +407,7 @@
                 activeCategory: null,
 
                 selectedServiceForlink: null,
+                selectedSalonTitle: null,
             };
         },
         computed: {
@@ -471,6 +472,10 @@
 
             selectSalon(salonId) {
                 this.selectedSalon = salonId;
+                const selectedSalon = this.salons.find(salon => salon.id === salonId);
+                if (selectedSalon) {
+                    this.selectedSalonTitle = selectedSalon.title; // Обновляем название выбранного салона
+                }
                 this.loadServices(salonId);
             }
             ,
@@ -541,9 +546,14 @@
 
             selectTime(timeSlot) {
                 this.selectedTime = timeSlot.time;
-                this.selectedSalon = timeSlot.salon_id;
-            }
-            ,
+                this.selectedSalon = timeSlot.salon_id; // Автоматически выбираем салон по времени
+
+                // Обновляем название салона
+                const selectedSalon = this.salons.find(salon => salon.id === this.selectedSalon);
+                if (selectedSalon) {
+                    this.selectedSalonTitle = selectedSalon.title; // Обновляем название выбранного салона
+                }
+            },
 
 
             loadSalons() {
@@ -643,6 +653,7 @@
     .panel.show {
         display: block;
     }
+
 
 </style>
 <script src="{% static 'js/main.js' %}"></script>
