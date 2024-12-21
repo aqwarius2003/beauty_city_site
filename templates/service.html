@@ -492,6 +492,7 @@
                         this.loadSchedule();
                         if (formattedDate) {
                             this.loadSalonsForDate(formattedDate);
+
                         }
                     }
                 });
@@ -503,12 +504,13 @@
                     .then(data => {
                         if (data.length > 0) {
                             this.salons = data;
-                            this.selectedSalon = data[0].id;
+
                         } else {
                             this.salons = [];
                             console.error('Нет доступных салонов для выбранной даты');
                         }
                     })
+                return date
             },
 
 
