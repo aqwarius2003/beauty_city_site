@@ -164,15 +164,19 @@
           <option value="salon2" >Салон 2</option>
           <option value="salon3" >Салон 3</option>
         </select> -->
+          <button class="accordion" @click="toggleSalonList">
+            (Выберите салон)
+          </button>
 
-          <label for="selectSalon">Выберите салон</label>
-          <select v-model="selectedSalon" @change="loadServices" class="service__form_select"
-                  v-show="salons.length > 0">
-            <option value="" disabled selected>Выберите салон</option>
-            <option v-for="salon in salons" :value="salon.id" :key="salon.id">
-              ${ salon.title }
-            </option>
-          </select>
+          <!-- Панель с салоны, которая отображается/скрывается при клике на кнопку -->
+          <div class="panel" v-show="isSalonListVisible">
+            <div v-for="salon in salons" :key="salon.id" @click="selectSalon(salon.id)" class="accordion__block">
+              <div class="accordion__block_intro">${ salon.title }</div>
+              <div class="accordion__block_address">${ salon.address }</div>
+            </div>
+          </div>
+
+
 
 
           <label for="selectedService">Выберите услугу</label>
@@ -280,7 +284,7 @@
                             v-for="timeSlot in times"
                             :key="timeSlot.time"
                             @click="selectTime(timeSlot)"
-                             :class="['time__elems_btn', { 'active': timeSlot.time === selectedTime }]">
+                            :class="['time__elems_btn', { 'active': timeSlot.time === selectedTime }]">
                       ${ timeSlot.time }
                     </button>
                   </div>
@@ -450,6 +454,8 @@
                 selectedDate: '',
                 timeSlots: null,
                 selectedTime: null,
+
+                isSalonListVisible: false
             };
         },
         //Для группировки по категориям
@@ -479,6 +485,15 @@
 
         },
         methods: {
+            toggleSalonList() {
+                this.isSalonListVisible = !this.isSalonListVisible;
+            },
+
+            // Метод для выбора салона из списка
+            selectSalon(salonId) {
+                this.selectedSalon = salonId;
+                this.loadServices(salonId); // Загружаем услуги для выбранного салона
+            },
             //! TODO Баг с двумя календарями
 
             initDatepicker() {
