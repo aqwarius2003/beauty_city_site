@@ -216,10 +216,7 @@
           <div class="row">
             <div class="col-md-4">
               <!-- ! Календарь -->
-
               <input type="text" id="datepickerHere" style="display: none">
-
-
             </div>
             <div class="col-md-8">
               <div class="time__elems" v-if="timeSlots">
@@ -474,14 +471,13 @@
                 this.selectedSalon = salonId;
                 const selectedSalon = this.salons.find(salon => salon.id === salonId);
                 if (selectedSalon) {
-                    this.selectedSalonTitle = selectedSalon.title; // Обновляем название выбранного салона
+                    this.selectedSalonTitle = selectedSalon.title;
                 }
                 this.loadServices(salonId);
             }
             ,
 
             initDatepicker() {
-                const datepickerElement = document.getElementById('datepickerHere');
 
                 new AirDatepicker('#datepickerHere', {
                     inline: true,
@@ -545,12 +541,11 @@
 
             selectTime(timeSlot) {
                 this.selectedTime = timeSlot.time;
-                this.selectedSalon = timeSlot.salon_id; // Автоматически выбираем салон по времени
+                this.selectedSalon = timeSlot.salon_id;
 
-                // Обновляем название салона
                 const selectedSalon = this.salons.find(salon => salon.id === this.selectedSalon);
                 if (selectedSalon) {
-                    this.selectedSalonTitle = selectedSalon.title; // Обновляем название выбранного салона
+                    this.selectedSalonTitle = selectedSalon.title;
                 }
             },
 
@@ -582,8 +577,6 @@
             }
             ,
 
-
-            // Эта хрень загружает услуги при изменении салона
             loadServices() {
                 if (!this.selectedSalon) return;
 
@@ -596,7 +589,6 @@
             }
             ,
 
-            // Эта хрень загружает мастеров при изменении услуги
             loadMasters(serviceId) {
 
                 if (this.selectedMaster && serviceId && !this.selectedSalon) {
@@ -644,17 +636,6 @@
     ;
 
 </script>
-<style>
-    .panel {
-        display: none;
-    }
-
-    .panel.show {
-        display: block;
-    }
-
-
-</style>
 <script src="{% static 'js/main.js' %}"></script>
 </body>
 </html>

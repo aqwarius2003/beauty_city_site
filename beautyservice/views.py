@@ -1,5 +1,5 @@
 from django.http import JsonResponse
-from django.shortcuts import render, redirect
+from django.shortcuts import render
 from django.utils import timezone
 
 from .models import Master, Salon, Service, Category, Schedule, Note, Client
@@ -11,7 +11,6 @@ def auth_view(request):
     if request.method == 'POST':
         data = json.loads(request.body)
         phone = data.get('tel')
-        print(f"Phone: {phone}")
         try:
             client = Client.objects.get(phone=phone)
             return JsonResponse({'redirect_url': f'/notes/{client.id}/'})
@@ -37,7 +36,6 @@ def notes(request, client_id):
     now = timezone.now()
     current_date = now.date()
     current_time = now.time()
-    print(current_time)
     client = Client.objects.get(id=client_id)
 
     upcoming_notes = Note.objects.filter(client_id=client_id,
@@ -54,7 +52,6 @@ def notes(request, client_id):
                                                              )
     
     total_price = sum(note.price for note in upcoming_notes)
-    print(total_price)
     context = {
         "upcoming_notes": upcoming_notes,
         "past_notes": past_notes,
@@ -76,7 +73,7 @@ def service(request):
     categories = Category.objects.all()
     schedule = Schedule.objects.filter(is_active=True)
 
-    info_about_service: dict[str, list[tuple[str, int]]] = {}
+    info_about_service: dict[str, list[dict[str, int]]] = {}
     for category in categories:
         services = category.services.all()
         services_list = [{"name": service.name, "price": service.price, "id": service.id} for service in services]
@@ -105,7 +102,6 @@ def service_finally(request):
     service = Service.objects.get(id=service)
     master = Master.objects.get(id=master)
 
-    print(salon, service, master, date, time, salon.address)
     return render(
         request,
         context={
@@ -123,7 +119,6 @@ def get_salons(request):
     unique_salons = Schedule.objects.filter(is_active=True).values('salon__id', 'salon__title').distinct()
 
     salon_data = [{'id': salon['salon__id'], 'title': salon['salon__title']} for salon in unique_salons]
-    print(salon_data)
     return JsonResponse(salon_data, safe=False, json_dumps_params={'ensure_ascii': False})
 
 
@@ -147,14 +142,12 @@ def get_all_services(request):
                     }
                 )
 
-    print(service_list)
     return JsonResponse(service_list, safe=False)
 
 
 def get_all_masters(request):
     masters = Master.objects.filter(schedules__isnull=False, schedules__is_active=True).distinct()
     master_data = [{'id': master.id, 'name': master.name, 'profession': master.profession} for master in masters]
-    print(master_data)
     return JsonResponse(master_data, safe=False)
 
 
@@ -178,7 +171,6 @@ def get_services(request):
                 }
 
         service_list = list(unique_services.values())
-        print(service_list)
         return JsonResponse(service_list, safe=False)
 
     return JsonResponse({'error': 'Salon ID is required'}, status=400)
@@ -204,7 +196,6 @@ def get_masters(request):
         {'id': master.id, 'name': master.name, 'profession': master.profession}
         for master in masters.values()
     ]
-    print(master_data)
     return JsonResponse(master_data, safe=False)
 
 
@@ -258,7 +249,6 @@ def get_schedule(request):
 
         schedules = Schedule.objects.filter(master_id=master_id,
                                             date=date, is_active=True)
-        print(schedules)
         time_slots = {}
         for schedule in schedules:
             if schedule.is_active:
@@ -283,7 +273,6 @@ def get_schedule_for_salon(request):
     master_id = request.GET.get('master_id')
     salon_id = request.GET.get('salon_id')
     date = request.GET.get('date')
-    print(f"Master ID: {master_id}, Salon ID: {salon_id}, Date: {date}")
     try:
         date = datetime.strptime(date, '%Y-%m-%d').date()
 
@@ -291,7 +280,6 @@ def get_schedule_for_salon(request):
                                             salon_id=salon_id,
                                             date=date,
                                             is_active=True)
-        print(f"Schedules found: {schedules.count()}")
         time_slots = {}
         for schedule in schedules:
             if schedule.is_active:
@@ -306,7 +294,6 @@ def get_schedule_for_salon(request):
         for key in time_slots:
             time_slots[key].sort(key=lambda x: datetime.strptime(x["time"], '%H:%M'))
         sorted_time_slots = {key: time_slots[key] for key in ["Утро", "День", "Вечер"] if key in time_slots}
-        print(sorted_time_slots)
         return JsonResponse(sorted_time_slots)
 
     except Exception as e:
@@ -334,8 +321,8 @@ def create_order(request):
         date = data.get('date')
         name = data.get('fname')
         phone = data.get('tel')
+        # TODO Добавить поле question в модель заказа
         question = data.get('contactsTextarea', '')
-        print(f"Salon: {salon_title}, Service: {service_title}, Master: {master_name}, Time: {time}, Date: {date}, Name: {name}, Phone: {phone}")
         if not (salon_title and service_title and master_name and time and date and name and phone):
             return JsonResponse({'success': False, 'error': 'Все обязательные поля должны быть заполнены.'}, status=400)
 

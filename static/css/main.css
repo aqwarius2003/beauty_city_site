@@ -2900,6 +2900,14 @@ footer {
 
 }
 
-.time__block{
+.time__block {
     padding-bottom: 30px;
+}
+
+.panel {
+    display: none;
+}
+
+.panel.show {
+    display: block;
 }
